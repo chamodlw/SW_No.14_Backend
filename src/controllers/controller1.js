@@ -1,24 +1,56 @@
-const tests = [
-    {
-        id:1,
-        name:'test1',
-        descripton:'D1',
-    },
-    {
-        id:2,
-        name:'test2',
-        descripton:'D2',
-    },
-];
+const { response } = require('../app');
+const Test = require('././models/model1.js');
 
-const getTests = (cb) =>{
-    cb(tests);
+const getTests = (req,res,next) =>{
+    Test.find()
+        .then(response =>{
+            res.json({response})
+        })
+        .catch(error =>{
+            res.json({error})
+        })
 };
 
-const getTestById = (id,cb) => {
-    const test = tests.find(test => test.id == id)
-    cb(test);
-};
+const addTest =(req,res,next) =>{
+    const test =new Test({
+        id: req.body.id,
+        name: req.body.name,
+        descripton: req.body.descripton,
+    });
+    user.save()
+        .then(response=> {
+            res.json({response})
+        })
+        .catch(error=> {
+            res.json({error})
+        });
+}
 
-exports.getTestById = getTestById;
+const updateTest =(req,res,next) =>{
+    const {id,name,descripton} = req.body;
+    
+    Test.updateOne({id:id} , {$set: {name: name}})
+        .then(response=> {
+            res.json({response})
+        })
+        .catch(error=> {
+            res.json({error})
+        });
+}
+
+const deleteTest =(req,res,next) =>{
+    const id = req.body.id;
+    
+    Test.deleteOne({id: id})
+        .then(response=> {
+            res.json({response})
+        })
+        .catch(error=> {
+            res.json({error})
+        });
+}
+
+exports.updateTests = updateTests;
+exports.addTests = addTests;
+exports.deleteTests = deleteTests;
 exports.getTests = getTests;

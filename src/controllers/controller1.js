@@ -1,5 +1,5 @@
-const { response } = require('../app');
-const Test = require('././models/model1.js');
+//controller.js
+const Test = require('../models/model1');
 
 const getTests = (req,res,next) =>{
     Test.find()
@@ -15,9 +15,9 @@ const addTest =(req,res,next) =>{
     const test =new Test({
         id: req.body.id,
         name: req.body.name,
-        descripton: req.body.descripton,
+        description: req.body.description,
     });
-    user.save()
+    test.save()
         .then(response=> {
             res.json({response})
         })
@@ -27,9 +27,18 @@ const addTest =(req,res,next) =>{
 }
 
 const updateTest =(req,res,next) =>{
-    const {id,name,descripton} = req.body;
-    
-    Test.updateOne({id:id} , {$set: {name: name}})
+    const {id,name,description} = req.body;
+    // Prepare the update object based on user input
+    let updateObject = {};
+    if (name) {
+        updateObject.name = name;
+    }
+    if (description) {
+        updateObject.description = description;
+    }
+
+    // Update the Test document
+    Test.updateOne({ id: id }, { $set: updateObject })
         .then(response=> {
             res.json({response})
         })
@@ -50,7 +59,20 @@ const deleteTest =(req,res,next) =>{
         });
 }
 
-exports.updateTests = updateTests;
-exports.addTests = addTests;
-exports.deleteTests = deleteTests;
+const selectTest =(req,res,next) =>{
+    const id = req.body.id;
+    
+    Test.find({id: id})
+        .then(response=> {
+            res.json({response})
+        })
+        .catch(error=> {
+            res.json({error})
+        });
+}
+
 exports.getTests = getTests;
+exports.updateTest = updateTest;
+exports.addTest = addTest;
+exports.deleteTest = deleteTest;
+exports.selectTest = selectTest;

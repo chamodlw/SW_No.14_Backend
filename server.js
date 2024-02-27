@@ -10,7 +10,7 @@ const router = require('./src/routes/router1')
 app.use(cors());
 app.use(express.json());
 
-const uri ='mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority';
+const uri ='mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 const connect = async () =>{
     try{
         await mongoose.connect(uri);

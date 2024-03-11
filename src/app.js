@@ -20,7 +20,9 @@ app.get('/tests',(req,res)=>{
     });
 });
 
+
 app.post('/addtest',(req,res) =>{
+    console.log('connect to mongodb');
     controller.addTest(req.body,(callack) =>{
         res.send(callack);
     });

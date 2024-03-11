@@ -1,4 +1,4 @@
-//controller.js
+//controller1.js
 const Test = require('../models/model1');
 
 const getTests = (req,res,next) =>{
@@ -11,21 +11,22 @@ const getTests = (req,res,next) =>{
         })
 };
 
-const addTest =(req,res,next) =>{
-    const test =new Test({
-        id: req.body.id,
-        name: req.body.name,
-        description: req.body.description,
+const addTest = (req, res, next) => {
+    const { id, name, description } = req.body;
+    const test = new Test({
+        id:id,
+      name: name,
+      description: description,
     });
     test.save()
-        .then(response=> {
-            res.json({response})
-        })
-        .catch(error=> {
-            res.json({error})
-        });
-}
-
+      .then(response => {
+        res.json({ response });
+      })
+      .catch(error => {
+        res.status(500).json({ error });
+      });
+  }
+  
 const updateTest =(req,res,next) =>{
     const {id,name,description} = req.body;
     // Prepare the update object based on user input

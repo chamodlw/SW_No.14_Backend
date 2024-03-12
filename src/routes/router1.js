@@ -6,6 +6,7 @@ const controller =require('../controllers/controller1.js');
 router.get('/tests',controller.getTests);
 router.get('/selecttest',controller.selectTest);
 router.post('/addtest',controller.addTest);
+router.post('/addappointment',controller.addAppointment);
 router.post('/updatetest',controller.updateTest);
 router.post('/deletetest',controller.deleteTest);
 

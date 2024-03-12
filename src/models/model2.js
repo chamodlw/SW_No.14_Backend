@@ -2,11 +2,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const AppointmentsSchema = new Schema({
-    a_id: { type: Number, required: true }, // Set a_id as required
-    tests: [{ id: Number, name: String }] // Array to store test ids and names
-});
+const appointmentSchema = new Schema({
+    id:Number,
+    selectTests: [{
+        testId: Number,
+        testName: String
+    }]
+})
 
-const Appointment = mongoose.model('Appointment', AppointmentsSchema);
+
+const Appointment =mongoose.model('Appointment', appointmentSchema);
 
 module.exports = Appointment;

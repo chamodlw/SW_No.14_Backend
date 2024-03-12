@@ -28,6 +28,13 @@ app.post('/addtest',(req,res) =>{
     });
 });
 
+app.post('/addappointment',(req,res) =>{
+    console.log('connect to mongodb');
+    controller.addAppointment(req.body,(callack) =>{
+        res.send(callack);
+    });
+});
+
 app.post('/updatetest',(req,res) =>{
     controller.updateTest(req.body,(callack) =>{
         res.send(callack);

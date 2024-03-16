@@ -14,6 +14,7 @@ app.use(
 
 app.use(express.json());
 
+//chamod start
 app.get('/tests',(req,res)=>{
     controller.getTests(tests => {
         res.send(tests);
@@ -52,5 +53,6 @@ app.post('/selecttest',(req,res) =>{
         res.send(tests);
     });
 });
+//chamod end
 
 module.exports = app;

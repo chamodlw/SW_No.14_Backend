@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const controller = require('./controllers/controller1.js');
+const controller3 = require('./controllers/controller3.js');
 
 app.use(cors());
 
@@ -54,5 +55,10 @@ app.post('/selecttest',(req,res) =>{
     });
 });
 //chamod end
-
+app.post('/recommendations',(req,res) =>{
+    console.log('connect to mongodb');
+    controller3.recommendation(req.body,(callack) =>{
+        res.send(callack);
+    });
+});
 module.exports = app;

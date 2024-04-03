@@ -2,7 +2,7 @@
 const Test = require('../models/model1');
 const Appointment = require('../models/model2');
 
-const getTests = (req,res,next) =>{
+const getTests = (req,res) =>{
     Test.find()
         .then(response =>{
             res.json({response})

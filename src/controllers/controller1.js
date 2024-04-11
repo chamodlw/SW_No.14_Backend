@@ -13,11 +13,15 @@ const getTests = (req,res) =>{
 };
 
 const addTest = (req, res, next) => {
-    const { id, name, description } = req.body;
+    const { id, name, description ,max,min,unit,price} = req.body;
     const test = new Test({
         id:id,
-      name: name,
-      description: description,
+        name: name,
+        description: description,
+        min:min,
+        max:max,
+        unit:unit,
+        price:price,
     });
     test.save()
       .then(response => {
@@ -58,7 +62,7 @@ const addTest = (req, res, next) => {
         });
 };
 const updateTest =(req,res,next) =>{
-    const {id,name,description} = req.body;
+    const {id,name,description,max,min,unit,price} = req.body;
     // Prepare the update object based on user input
     let updateObject = {};
     if (name) {
@@ -66,6 +70,18 @@ const updateTest =(req,res,next) =>{
     }
     if (description) {
         updateObject.description = description;
+    }
+    if (min) {
+        updateObject.min = min;
+    }
+    if (max) {
+        updateObject.max = max;
+    }
+    if (unit) {
+        updateObject.unit = unit;
+    }
+    if (price) {
+        updateObject.price = price;
     }
 
     // Update the Test document

@@ -1,6 +1,6 @@
 //controller1.js
-const Test = require('../models/model1');
-const Appointment = require('../models/model2');
+const Test = require('../models/model-tmng');
+const Appointment = require('../models/model-appmng');
 
 const getTests = (req,res) =>{
     Test.find()

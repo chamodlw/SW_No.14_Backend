@@ -1,4 +1,4 @@
-const Appointment = require('../models/model2');
+const Appointment = require('../models/model-appmng');
 
 const addAppointments = (req, res, next) => {
     console.log('enter add section');

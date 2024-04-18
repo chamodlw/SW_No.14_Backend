@@ -1,6 +1,6 @@
-const { response } = require('./app');
-const User = require('./model');
-const TestTube = require('./testTubeModel');
+// const { response } = require('./app');
+const User = require('../models/model');
+const TestTube = require('../models/testTubeModel');
 
 
 const getUsers = (req, res, next) => {

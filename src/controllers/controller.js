@@ -18,7 +18,7 @@ const addUser = (req, res, next) => {
         id: req.body.id,
         name: req.body.name,
         test: req.body.test,
-        test_tubes: req.body.test_tubes, // Assuming req.body.test_tubes is an array
+        test_tubes: req.body.test_tubes, 
         test_tube_id: req.body.test_tube_id,
         blood_type: req.body.blood_type,
     });

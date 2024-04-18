@@ -6,9 +6,10 @@ const userSchema = new Schema({
     name: String,
     test: String,
     test_tubes: String,
+    test_tube_id: String,
     blood_type: String,
 });
 
-const User = mongoose.model('User', userSchema);
+const TestingUser = mongoose.model('TestingUser', userSchema);
 
-module.exports = User;
+module.exports = TestingUser;

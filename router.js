@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./controller');
 
-router.get('/users', controller.getUsers);
-router.post('/createuser', controller.addUser);
-router.post('/updateuser', controller.updateUser);
-router.delete('/deleteuser', controller.deleteUser);
+router.get('/testing-users', controller.getUsers);
+router.post('/create-testing-user', controller.addUser);
+router.post('/update-testing-user', controller.updateUser);
+router.delete('/delete-testing-user', controller.deleteUser);
 
 router.get('/test_tubes', controller.getTestTubes);
 router.post('/createtest_tubes', controller.addTestTube);

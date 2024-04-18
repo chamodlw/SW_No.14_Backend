@@ -13,25 +13,25 @@ app.use(
 
 app.use(express.json());
 
-app.get('/users', (req, res) =>  {
+app.get('/testing-users', (req, res) =>  {
     controller.getUsers((req, res, next) => {
         res.send();
     });
 });
 
-app.post('/createuser', (req, res) =>  {
+app.post('/create-testing-user', (req, res) =>  {
     controller.addUser(req.body, (callback) => {
         res.send();
     });
 });
 
-app.post('/updateuser', (req, res) =>  {
+app.post('/update-testing-user', (req, res) =>  {
     controller.updateUser(req.body, (callback) => {
         res.send(callback);
     });
 });
 
-app.delete('/deleteuser', (req, res) =>  {
+app.delete('/delete-testing-user', (req, res) =>  {
     controller.deleteUser(req.body, (callback) => {
         res.send(callback);
     });

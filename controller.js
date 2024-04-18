@@ -19,6 +19,7 @@ const addUser = (req, res, next) => {
         name: req.body.name,
         test: req.body.test,
         test_tubes: req.body.test_tubes, // Assuming req.body.test_tubes is an array
+        test_tube_id: req.body.test_tube_id,
         blood_type: req.body.blood_type,
     });
     user.save()
@@ -32,9 +33,9 @@ const addUser = (req, res, next) => {
 
 
 const updateUser = (req, res, next) => {
-    const { id, name, test, test_tubes, blood_type } = req.body;
+    const { id, name, test, test_tubes, test_tube_id, blood_type } = req.body;
     
-    User.updateOne({ id: id }, { name: name, test: test, test_tubes: test_tubes, blood_type: blood_type })
+    User.updateOne({ id: id }, { name: name, test: test, test_tubes: test_tubes, test_tube_id: test_tube_id, blood_type: blood_type })
     .then(response => {
         res.json({ response });
     })

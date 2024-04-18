@@ -7,6 +7,8 @@ const host = '127.0.0.1';
 const mongoose = require('mongoose');
 const router1 = require('./src/routes/router1');
 const router3 = require('./src/routes/router3');
+const router = require('./src/routes/router');
+
 
 
 //middleware
@@ -25,7 +27,7 @@ const connect = async () =>{ //javascript async function connect function is to 
         console.log('Connected to mongodb');
     }
     catch(error){
-        console.log('Mongodb eror' + error);
+        console.log('MongoDB Error: ', error);
     }
 }; //try catch to error handle
 
@@ -33,11 +35,12 @@ connect(); //calling the connect function
 //when the server file runs, the connect function will run, will access uri through mongoos drive inside try block, will access the uri - the link
 
 const server = app.listen(port,host, () => { //port and host were added to variables in the top
-    console.log(`node server listen to ${server.address().port}`); //this console log is to confirm that the server is running
+    console.log(`Node Server listen to ${server.address().port}`); //this console log is to confirm that the server is running
 });
 
 app.use('/api/router1',router1);
 app.use('/api/router3',router3);
+app.use('/api', router);
 module.exports = app;
 
 //npm i nodemon -g to install nodemon

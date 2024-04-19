@@ -1,8 +1,8 @@
 //router2.js
 const express = require('express');
 const router = express.Router();
-const controller2 = require('../controllers/controller2.js');
+const controllerappmng = require('../controllers/controller-appmng.js');
 
-router.post('/addappointments', controller2.addAppointments);
+router.post('/addappointments', controllerappmng.addAppointments);
 
 module.exports = router;

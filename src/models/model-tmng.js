@@ -6,6 +6,10 @@ const testSchema = new Schema({
     id:Number,
     name:String,
     description:String,
+    min:Number,
+    max:Number,
+    unit:String,
+    price:Number,
 })
 
 

@@ -35,12 +35,7 @@ app.post('/addtest',(req,res) =>{
     });
 });
 
-app.post('/addappointment',(req,res) =>{
-    console.log('connect to mongodb');
-    controllertmng.addAppointment(req.body,(callack) =>{
-        res.send(callack);
-    });
-});
+
 
 app.post('/updatetest',(req,res) =>{
     controllertmng.updateTest(req.body,(callack) =>{
@@ -57,6 +52,19 @@ app.post('/deletetest',(req,res) =>{
 app.post('/selecttest',(req,res) =>{
     controllertmng.selectTest(tests =>{
         res.send(tests);
+    });
+});
+
+app.post('/addappointment',(req,res) =>{
+    console.log('connect to mongodb');
+    controllerappmng.addAppointment(req.body,(callack) =>{
+        res.send(callack);
+    });
+});
+
+app.get('/appointments',(req,res)=>{
+    controllerappmng.getAppointments(appointments => {
+        res.send(appointments);
     });
 });
 //chamod end

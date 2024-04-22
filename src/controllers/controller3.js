@@ -74,7 +74,7 @@ const login = (req, res, next) => {
     // login function implementation
     const { username, password } = req.body;
 
-    model3.authenticate(username, password)
+    User.authenticate(username, password)
         .then(user => {
             if (user) {
                 res.json({ success: true, message: "Login successful", user: user });

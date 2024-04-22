@@ -40,7 +40,7 @@ const server = app.listen(port,host, () => { //port and host were added to varia
 
 app.use('/api/router1',router1);
 app.use('/api/router3',router3);
-app.use('/api', router);
+app.use('/api/', router);
 module.exports = app;
 
 //npm i nodemon -g to install nodemon

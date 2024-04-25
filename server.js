@@ -1,7 +1,7 @@
-//server.js - to run the backend - express - a javascript framework we use. We can make an http server using express and make rest API s 
+ 
 const express = require('express');
-const app = express(); //created and express instance
-const cors = require('cors'); //installing cors - after typing npm i cors in terminal
+const app = express(); 
+const cors = require('cors'); 
 const port = 3100;
 const host = '127.0.0.1';
 const mongoose = require('mongoose');
@@ -12,12 +12,11 @@ const router = require('./src/routes/router');
 
 
 
-//middleware
-app.use(cors()); //cors is a middleware - to avoid the block between frontend and backend
-app.use(express.json()); //convert into json arrays what we share as request response bodies
-//use this urlencode to encode what comes from the backend - encode arrays and strings, use extend? - can encode anything
 
-//mongoose.connect('mongodb://localhost:27017/employee'); adding connection of the mongo db
+app.use(cors()); //to avoid the block between frontend and backend
+app.use(express.json()); //convert into json arrays what we share as request response bodies
+
+
 const uri ='mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 const connect = async () =>{ //javascript async function connect function is to connect uri with mongodb
     try{
@@ -27,7 +26,7 @@ const connect = async () =>{ //javascript async function connect function is to 
     catch(error){
         console.log('MongoDB Error: ', error);
     }
-}; //try catch to error handle
+}; 
 
 connect(); //calling the connect function
 //when the server file runs, the connect function will run, will access uri through mongoos drive inside try block, will access the uri - the link
@@ -42,6 +41,4 @@ app.use('/api/router3',router3);
 app.use('/api', router);
 module.exports = app;
 
-//npm i nodemon -g to install nodemon
-//nodemon server.js to check nodemon
-//postmon is used to try API s. 
+ 

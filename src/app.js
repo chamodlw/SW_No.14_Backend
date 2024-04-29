@@ -6,10 +6,10 @@ const bodyParser = require('body-parser');
 const controller = require('./controller');
 const controllertmng = require('./controllers/controller-tmng.js');
 const controllerappmng = require('./controllers/controller-appmng.js');
-const User = require('./models/model3.js');
-const { signin, login, getUser, updateUser, deleteUser } = require('./controllers/controller3.js');
 const controller3 = require('./controllers/controller_dapproval.js');
-
+const controller_login = require('./controllers/controller_login.js');
+const User = require('./models/model_login.js');
+const { signin, login, getUser, updateUser, deleteUser } = require('./controllers/controller_login.js');
 
 app.use(cors());
 
@@ -56,6 +56,30 @@ app.post('/selecttest',(req,res) =>{
     });
 });
 
+//Theoda signin start
+
+app.get('/users',(req, res)=>{ 
+    controller_login.getUser(req.body, res, (callack) => { 
+        res.send(callack); 
+    });
+});
+
+app.post('/createuser',(req, res) =>{
+    controller_login.signin(req.body, (callack) =>{
+    });
+});
+
+app.put('/updateuser',(req, res) =>{
+        controller_login.updateUser(req.body, (callack) =>{
+            res.send(callack); //returning call back to check whether the method has been updates correctly and who has been updated
+        });
+    });
+
+app.get('/appointments',(req,res)=>{
+    controllerappmng.getAppointments(appointments => {
+        res.send(appointments);
+    });
+});
 app.post('/addappointment',(req,res) =>{
     console.log('connect to mongodb');
     controllerappmng.addAppointment(req.body,(callack) =>{
@@ -63,11 +87,6 @@ app.post('/addappointment',(req,res) =>{
     });
 });
 
-app.get('/appointments',(req,res)=>{
-    controllerappmng.getAppointments(appointments => {
-        res.send(appointments);
-    });
-});
 //chamod end
 app.post('/recommendations',(req,res) =>{
     console.log('connect to mongodb');
@@ -82,6 +101,11 @@ app.get('/testing-users', (req, res) =>  {
     });
 });
 
+app.delete('/deleteuser',(req, res) =>{
+    controller_login.deleteUser(req.body, (callack) =>{
+        res.send(callack);
+            });
+        });
 app.post('/create-testing-user', (req, res) =>  {
     controller.addUser(req.body, (callback) => {
         res.send();

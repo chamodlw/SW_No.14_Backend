@@ -7,9 +7,8 @@ const host = '127.0.0.1';
 const mongoose = require('mongoose');
 const routerappmng = require('./src/routes/router-appmng');
 const routertmng = require('./src/routes/router-tmng');
-const router3 = require('./src/routes/router3');
 const router = require('./src/routes/router');
-
+const router_dapproval = require('./src/routes/routes_dapproval')
 
 
 //middleware
@@ -18,6 +17,12 @@ app.use(express.json()); //convert into json arrays what we share as request res
 //use this urlencode to encode what comes from the backend - encode arrays and strings, use extend? - can encode anything
 
 //mongoose.connect('mongodb://localhost:27017/employee'); adding connection of the mongo db
+
+
+
+app.use(cors());
+app.use(express.json());
+
 const uri ='mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 const connect = async () =>{ //javascript async function connect function is to connect uri with mongodb
     try{
@@ -36,12 +41,7 @@ const server = app.listen(port,host, () => { //port and host were added to varia
     console.log(`Node Server listen to ${server.address().port}`); //this console log is to confirm that the server is running
 });
 
-app.use('/api/',routerappmng);
-app.use('/api/',routertmng);
-app.use('/api/router3',router3);
-app.use('/api', router);
-module.exports = app;
-
-//npm i nodemon -g to install nodemon
-//nodemon server.js to check nodemon
-//postmon is used to try API s. 
+app.use('/api',router);
+app.use('/api',router_dapproval);
+app.use('/api',routerappmng);
+app.use('/api',routertmng);

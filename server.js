@@ -6,7 +6,7 @@ const port = 3100;
 const host = 'localhost';
 const mongoose = require('mongoose');
 const router = require('./src/routes/router1');
-const router3 = require('./src/routes/router3')
+const router_dapproval = require('./src/routes/routes_dapproval')
 
 app.use(cors());
 app.use(express.json());
@@ -29,4 +29,4 @@ const server = app.listen(port,host, () => {
 });
 
 app.use('/api',router);
-app.use('/api',router3);
+app.use('/api',router_dapproval);

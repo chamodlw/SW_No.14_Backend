@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const controller = require('./controllers/controller1.js');
-const controller3 = require('./controllers/controller3.js');
+const controller3 = require('./controllers/controller_dapproval.js');
 
 app.use(cors());
 
@@ -61,4 +61,3 @@ app.post('/recommendations',(req,res) =>{
         res.send(callack);
     });
 });
-module.exports = app;

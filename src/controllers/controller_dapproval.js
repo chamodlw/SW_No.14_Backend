@@ -1,4 +1,4 @@
-const Recommendation = require('../models/model3');
+const Recommendation = require('../models/model_dapproval');
 
 const recommendations = (req, res) => {
     const { date, id, recommendation } = req.body;
@@ -15,5 +15,6 @@ const recommendations = (req, res) => {
             res.status(500).json({ error });
         });
 };
+
 
 module.exports = { recommendations };

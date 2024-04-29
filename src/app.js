@@ -5,9 +5,9 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const controller1 = require('./controllers/controller1.js');
-const controller3 = require('./controllers/controller3.js');
-const User = require('./models/model3.js');
-const { signin, login, getUser, updateUser, deleteUser } = require('./controllers/controller3.js');
+const controller_login = require('./controllers/controller_login.js');
+const User = require('./models/model_login.js');
+const { signin, login, getUser, updateUser, deleteUser } = require('./controllers/controller_login.js');
 
 
 app.use(cors()); //middleware
@@ -63,27 +63,26 @@ app.post('/selecttest',(req,res) =>{
 
 //Theoda signin start
 
-//making rest APIs and taking the CRUD we built in controller, to app.js
-app.get('/users',(req, res)=>{ //The URL /users represents a route in this Express application. When a client makes a GET request to this URL, the corresponding route handler is triggered. 
-    controller3.getUser(req.body, res, (callack) => { //controller3 - using a controller named controller3 and invoking its getUsers method. Here, req, res, next are parameters.
-        res.send(callack); //User - what is being exported in model3
+app.get('/users',(req, res)=>{ 
+    controller_login.getUser(req.body, res, (callack) => { 
+        res.send(callack); 
     });
 });
 
 app.post('/createuser',(req, res) =>{
-    controller3.signin(req.body, (callack) =>{
+    controller_login.signin(req.body, (callack) =>{
         res.send(callack);
     });
 });
 
     app.put('/updateuser',(req, res) =>{
-        controller3.updateUser(req.body, (callack) =>{
-            res.send(callack); //returning call back to check whether the method has been updates correctly and who has been updates
+        controller_login.updateUser(req.body, (callack) =>{
+            res.send(callack); //returning call back to check whether the method has been updates correctly and who has been updated
         });
     });
 
         app.delete('/deleteuser',(req, res) =>{
-            controller3.deleteUser(req.body, (callack) =>{
+            controller_login.deleteUser(req.body, (callack) =>{
                 res.send(callack);
             });
         });

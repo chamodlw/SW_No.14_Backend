@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 
-const userSchema = new Schema({ //creating a model for user
+const userSchema = new Schema({ //creating a model for user. A blueprint to introduce a user, what is he having bla bla bla.
     fullname: {
         type: String,
         required: true

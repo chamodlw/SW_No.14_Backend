@@ -30,6 +30,11 @@ const userSchema = new Schema({ //creating a model for user.
     password: {
         type: String,
         required: true
+    },
+    role: {
+        type: String,
+        enum: ['doctor', 'patient', 'admin', 'lab assistant', 'lab operator'],
+        required: true
     }
 });
 

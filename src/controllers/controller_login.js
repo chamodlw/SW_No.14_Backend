@@ -1,18 +1,29 @@
 // controller3.js - Theoda - use for login
-const User = require('../models/model3'); // Importing User model
+const User = require('../models/model_login'); 
+
 const bcrypt = require('bcrypt');
 
 const signin = (req, res, next) => {
     // Signin function implementation
     const { fullname, email, address, nationalID, username, password } = req.body;
-    const user = new User({ fullname, email, address, nationalID, username, password });
-    user.save()
+
+     // Hash the password before saving it to the database
+     bcrypt.hash(password, 10, (err, hashedPassword) => {
+        if (err) {
+            return res.status(500).json({ success: false, error: err.message });
+        }
+
+    const user = new User({ fullname, email, address, nationalID, username, password }); 
+
+    user.save() 
+
         .then(user => {
             res.json({ success: true, message: "Registration successful", user });
         })
         .catch(error => {
             res.status(500).json({ success: false, error: error.message });
         });
+});
 };
 
 const getUser = (req, res, next) => {
@@ -20,6 +31,7 @@ const getUser = (req, res, next) => {
     User.find()
         .then(response => {
             res.json({ response });
+
         })
         .catch(error => {
             res.status(500).json({ error });
@@ -27,9 +39,11 @@ const getUser = (req, res, next) => {
 };
 
 const updateUser = (req, res, next) => {
-    // updateUser function implementation
-    const { fullname, email, address, nationalID, username, password } = req.body;
+
+    const { fullname, email, address, nationalID, username, password } = req.body; 
+
     const userId = req.user.id;
+
     const updateObject = {};
     if (fullname) {
         updateObject.fullname = fullname;
@@ -49,6 +63,8 @@ const updateUser = (req, res, next) => {
     if (password) {
         updateObject.password = password;
     }
+
+     // Update the user profile based on the user's identifier
     User.updateOne({ _id: userId }, { $set: updateObject })
         .then(response => { 
             res.json({ success: true, message: "Profile updated successfully", response });
@@ -60,7 +76,8 @@ const updateUser = (req, res, next) => {
 
 const deleteUser = (req, res, next) => {
     // deleteUser function implementation
-    const { id } = req.body;
+    const { id } = req.body;  
+
     User.deleteOne({_id:id})
         .then(response => {
             res.json({ response });
@@ -72,9 +89,10 @@ const deleteUser = (req, res, next) => {
 
 const login = (req, res, next) => {
     // login function implementation
-    const { username, password } = req.body;
+    const { username, password } = req.body; 
 
-    model3.authenticate(username, password)
+    model3.authenticate(username, password) 
+
         .then(user => {
             if (user) {
                 res.json({ success: true, message: "Login successful", user: user });

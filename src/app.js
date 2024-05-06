@@ -6,9 +6,10 @@ const bodyParser = require('body-parser');
 const controller = require('./controller');
 const controllertmng = require('./controllers/controller-tmng.js');
 const controllerappmng = require('./controllers/controller-appmng.js');
-const controller3 = require('./controllers/controller3.js');
-const User = require('./models/model3.js');
-const { signin, login, getUser, updateUser, deleteUser } = require('./controllers/controller3.js');
+const controller3 = require('./controllers/controller_dapproval.js');
+const controller_login = require('./controllers/controller_login.js');
+const User = require('./models/model_login.js');
+const { signin, login, getUser, updateUser, deleteUser } = require('./controllers/controller_login.js');
 
 app.use(cors());
 
@@ -55,6 +56,30 @@ app.post('/selecttest',(req,res) =>{
     });
 });
 
+//Theoda signin start
+
+app.get('/users',(req, res)=>{ 
+    controller_login.getUser(req.body, res, (callack) => { 
+        res.send(callack); 
+    });
+});
+
+app.post('/createuser',(req, res) =>{
+    controller_login.signin(req.body, (callack) =>{
+    });
+});
+
+app.put('/updateuser',(req, res) =>{
+        controller_login.updateUser(req.body, (callack) =>{
+            res.send(callack); //returning call back to check whether the method has been updates correctly and who has been updated
+        });
+    });
+
+app.get('/appointments',(req,res)=>{
+    controllerappmng.getAppointments(appointments => {
+        res.send(appointments);
+    });
+});
 app.post('/addappointment',(req,res) =>{
     console.log('connect to mongodb');
     controllerappmng.addAppointment(req.body,(callack) =>{
@@ -62,43 +87,13 @@ app.post('/addappointment',(req,res) =>{
     });
 });
 
-app.get('/appointments',(req,res)=>{
-    controllerappmng.getAppointments(appointments => {
-        res.send(appointments);
-    });
-});
 //chamod end
-
-//Theoda signin start
-
-//making rest APIs and taking the CRUD we built in controller, to app.js
-app.get('/users',(req, res)=>{ //The URL /users represents a route in this Express application. When a client makes a GET request to this URL, the corresponding route handler is triggered. 
-    controller3.getUser(req.body, res, (callack) => { //controller3 - using a controller named controller3 and invoking its getUsers method. Here, req, res, next are parameters.
-        res.send(callack); //User - what is being exported in model3
-        console.log('connect ');
-    });
-});
-
-app.post('/createuser',(req, res) =>{
-    controller3.signin(req.body, (callack) =>{
+app.post('/recommendations',(req,res) =>{
+    console.log('connect to mongodb');
+    controller3.recommendation(req.body,(callack) =>{
         res.send(callack);
     });
 });
-
-    app.put('/updateuser',(req, res) =>{
-        controller3.updateUser(req.body, (callack) =>{
-            res.send(callack); //returning call back to check whether the method has been updates correctly and who has been updates
-        });
-    });
-
-        app.delete('/deleteuser',(req, res) =>{
-            controller3.deleteUser(req.body, (callack) =>{
-                res.send(callack);
-            });
-        });
-
-// Theoda login end
-
 //rajith
 app.get('/testing-users', (req, res) =>  {
     controller.getUsers((req, res, next) => {
@@ -106,6 +101,11 @@ app.get('/testing-users', (req, res) =>  {
     });
 });
 
+app.delete('/deleteuser',(req, res) =>{
+    controller_login.deleteUser(req.body, (callack) =>{
+        res.send(callack);
+            });
+        });
 app.post('/create-testing-user', (req, res) =>  {
     controller.addUser(req.body, (callback) => {
         res.send();
@@ -149,6 +149,4 @@ app.delete('/deletetest_tubes', (req, res) =>  {
         res.send(callback);
     });
 });
-
-
 module.exports = app;

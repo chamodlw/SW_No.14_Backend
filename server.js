@@ -1,65 +1,40 @@
-<<<<<<< Updated upstream
-//server.js
+// Server dependencies
 const express = require('express');
+const cors = require('cors');
 const app = express();
-const cors = require('cors');
+// Mongo dependency
+
+const mongoose = require('mongoose');
+
+// DB Connection
+const connectDatabase = () => {
+    mongoose.set('strictQuery', true);
+    mongoose.connect('mongodb+srv://rajithaubandara:%40Uom2022@pationdata.dwwjafy.mongodb.net/?retryWrites=true&w=majority&appName=Pationdata')
+        .then((data) => {
+            console.log(`mongodb connected with server ${data.connection.host}`);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+}
+
+// server
 const port = 3100;
-const host = 'localhost';
-const mongoose = require('mongoose');
-const router = require('./src/routes/router1')
-=======
-const express = require('express');
-const cors = require('cors');
-const app = require('./src/app');
-
-
-const mongoose = require('mongoose');
-const router = require('./src/router')
-
->>>>>>> Stashed changes
 
 app.use(cors());
 app.use(express.json());
+app.use(require("./src/routes/record"));
 
-<<<<<<< Updated upstream
-const uri ='mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-const connect = async () =>{
-    try{
-        await mongoose.connect(uri);
-        console.log('connect to mongodb');
-    }
-    catch(error){
-        console.log('mongodb eror' + error);
-=======
-
-const uri = 'mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority'
-
-const connect =async()=>{
-    try {
-        await mongoose.connect(uri);
-        console.log('Connnected to mongodb');
-
-    }
-    catch(error){
-        console.log('MongoDB Error; ',error);
->>>>>>> Stashed changes
-    }
-};
-
-connect();
-<<<<<<< Updated upstream
-
-const server = app.listen(port,host, () => {
-    console.log(`node server listen to ${server.address().port}`);
+app.listen(port, () => {
+    console.log(`Server is running on port: ${port}`);
 });
 
-app.use('/api',router);
-=======
-//3100
-const server =app.listen(3001,'127.0.0.1',()=>{
-
-    console.log(`node server is listning to ${server.address().port} `)
+// Call the connectDatabase function and pass the startServer function as a callback
+connectDatabase((err) => {
+    if (err) {
+        console.error("Error connecting to the database:", err);
+    } else {
+        // Database connection successful, start the server
+        startServer();
+    }
 });
-
-app.use('/api',router);
->>>>>>> Stashed changes

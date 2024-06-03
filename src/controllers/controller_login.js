@@ -1,109 +1,98 @@
-// controller3.js - Theoda - use for login
-const User = require('../models/model_login'); 
-
+const User = require('../models/model_login');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const signin = (req, res, next) => {
-    // Signin function implementation
-    const { fullname, email, address, nationalID, username, password } = req.body;
+const addUser = (req, res, next) => {
+    const { firstname, lastname, email, address, phonenumber, nationalID, role, username, password } = req.body;
 
-     // Hash the password before saving it to the database
-     bcrypt.hash(password, 10, (err, hashedPassword) => {
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
         if (err) {
             return res.status(500).json({ success: false, error: err.message });
         }
 
-    const user = new User({ fullname, email, address, nationalID, username, password }); 
+        const user = new User({ firstname, lastname, email, address, phonenumber, nationalID, role, username, password: hashedPassword });
 
-    user.save() 
-
-        .then(user => {
-            res.json({ success: true, message: "Registration successful", user });
-        })
-        .catch(error => {
-            res.status(500).json({ success: false, error: error.message });
-        });
-});
+        user.save()
+            .then(user => res.json({ success: true, message: "Registration successful", user }))
+            .catch(error => res.status(500).json({ success: false, error: error.message }));
+    });
 };
 
 const getUser = (req, res, next) => {
-    // getUser function implementation
     User.find()
-        .then(response => {
-            res.json({ response });
-
-        })
-        .catch(error => {
-            res.status(500).json({ error });
-        });
+        .then(response => res.json({ response }))
+        .catch(error => res.status(500).json({ error }));
 };
 
 const updateUser = (req, res, next) => {
+    const { id, firstname, lastname, email, address, phonenumber, nationalID, role, username, password } = req.body;
+    if (!id) return res.status(400).json({ success: false, message: "User ID is required" });
 
-    const { fullname, email, address, nationalID, username, password } = req.body; 
-
-    const userId = req.user.id;
-
-    const updateObject = {};
-    if (fullname) {
-        updateObject.fullname = fullname;
-    }
-    if (email) {
-        updateObject.email = email;
-    }
-    if (address) {
-        updateObject.address = address;
-    }
-    if (nationalID) {
-        updateObject.nationalID = nationalID;
-    }
-    if (username) {
-        updateObject.username = username;
-    }
+    const updateObject = { firstname, lastname, email, address, phonenumber, nationalID, role, username, password };
     if (password) {
-        updateObject.password = password;
+        updateObject.password = bcrypt.hashSync(password, 10);
     }
 
-     // Update the user profile based on the user's identifier
-    User.updateOne({ _id: userId }, { $set: updateObject })
-        .then(response => { 
-            res.json({ success: true, message: "Profile updated successfully", response });
-        })
-        .catch(error => {
-            res.status(500).json({ success: false, error: error.message });
-        });
+    User.updateOne({ _id: id }, { $set: updateObject })
+        .then(response => res.json({ success: true, message: "Profile updated successfully", response }))
+        .catch(error => res.status(500).json({ success: false, error: error.message }));
 };
 
 const deleteUser = (req, res, next) => {
-    // deleteUser function implementation
-    const { id } = req.body;  
-
-    User.deleteOne({_id:id})
-        .then(response => {
-            res.json({ response });
-        })
-        .catch(error => {
-            res.status(500).json({ error });
-        });
+    const { id } = req.body;
+    User.deleteOne({ _id: id })
+        .then(response => res.json({ response }))
+        .catch(error => res.status(500).json({ error }));
 };
 
-const login = (req, res, next) => {
-    // login function implementation
-    const { username, password } = req.body; 
+const login = async (req, res, next) => {
+    try {
+        const { username, password } = req.body;
+        //console.log('Received username:', username);
+        //console.log('Received password:', password); - error handling
+        const user = await User.authenticate(username, password);
+        //console.log('User:', user); //Log User Details
 
-    model3.authenticate(username, password) 
+        if (user) {
+            const token = jwt.sign({id: user._id, username: user.username, role: user.role }, 'jwt_secret',{ expiresIn: '1d' });
+            //console.log('Generated token:', token); // Log the generated token
 
-        .then(user => {
-            if (user) {
-                res.json({ success: true, message: "Login successful", user: user });
-            } else {
-                res.status(401).json({ success: false, message: "Invalid username or password" });
-            }
-        })
-        .catch(error => {
-            res.status(500).json({ error: error.message });
-        });
+            res.cookie('token', token, { httpOnly: true });
+            //console.log('Sending user data:', { username: user.username, role: user.role }); // Log the user data being sent in the response
+            res.json({ message: "Success", user: { id: user._id, username: user.username, role: user.role } }); // Include the user's role in the response, so it will directed to corresposnding role page. Include id, so it will directed to their specific account
+        } else {
+            console.log('Authentication failed for:', username);
+            res.status(401).json({ message: "Invalid username or password." });
+        }
+    } catch (err) {
+        console.error('Error during login:', err);
+        res.status(500).json({ message: "Internal server error." });
+    }
 };
 
-// Exporting functions
-module.exports = { signin, login, getUser, updateUser, deleteUser };
+// Middleware to authenticate JWT tokens 
+const authenticateJWT = (req, res, next) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ message: 'Access denied. No token provided.' });
+    }
+    try {
+        const decoded = jwt.verify(token, 'jwt_secret'); //if the token is available, then verify it.
+        req.user = decoded;
+        next();
+    } catch (ex) {
+        res.status(400).json({ message: 'Invalid token.' });
+    }
+};
+
+// Middleware to authorize based on roles
+const authorizeRoles = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ message: 'Access denied.' });
+        }
+        next();
+    };
+};
+
+module.exports = { addUser, getUser, updateUser, deleteUser, login, authenticateJWT, authorizeRoles };

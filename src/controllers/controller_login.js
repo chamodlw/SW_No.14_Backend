@@ -25,18 +25,31 @@ const getUser = (req, res, next) => {
 };
 
 const updateUser = (req, res, next) => {
-    const { id, firstname, lastname, email, address, phonenumber, nationalID, role, username, password } = req.body;
-    if (!id) return res.status(400).json({ success: false, message: "User ID is required" });
+    //console.log('Request body:', req.body); //To see what data/updations is being sent to the server.
 
-    const updateObject = { firstname, lastname, email, address, phonenumber, nationalID, role, username, password };
+    const { id, _id, firstname, lastname, email, address, phonenumber, nationalID, role, username, password } = req.body; //Destructuring the specific fields from the request body
+    //if (!id){
+    const userId = id || _id; //Set the userId variable to either id or _id, whichever is present.
+    if (!userId) {  // if userId is not present.
+        console.log('User ID is missing');
+        return res.status(400).json({ success: false, message: "User ID is required" });
+    }
+    const updateObject = { firstname, lastname, email, address, phonenumber, nationalID, role, username };
     if (password) {
         updateObject.password = bcrypt.hashSync(password, 10);
     }
 
-    User.updateOne({ _id: id }, { $set: updateObject })
-        .then(response => res.json({ success: true, message: "Profile updated successfully", response }))
-        .catch(error => res.status(500).json({ success: false, error: error.message }));
-};
+    //console.log('Update object:', updateObject);
+
+    User.updateOne({ _id: userId  }, { $set: updateObject })
+        .then(response => {
+            //console.log('Update response:', response);
+            res.json({ success: true, message: "Profile updated successfully", response });
+        })
+        .catch(error => {
+            console.error('Error updating profile:', error);
+            res.status(500).json({ success: false, error: error.message });
+        });};
 
 const deleteUser = (req, res, next) => {
     const { id } = req.body;
@@ -70,17 +83,45 @@ const login = async (req, res, next) => {
     }
 };
 
+const getCurrentUser = (req, res, next) => { //For User Profile
+    //console.log('getCurrentUser - req.user:', req.user); // Log the req.user object, After successfull User Profile display, this log would be 
+
+    if (!req.user || !req.user.id) {
+        console.log('getCurrentUser - User ID not found in request');
+        return res.status(400).json({ message: 'User ID not found in request' });
+    }
+
+    const userId = req.user.id; // Extracted from the JWT token by the authenticateJWT middleware
+    User.findById(userId)
+    //User.findById(req.user.id)
+        .then(user => {
+            if (!user) {
+                console.log('User not found:', user);
+                return res.status(404).json({ message: 'User not found' });
+            }
+            res.json(user);
+        })
+        .catch(error => {
+            console.error('Error fetching user:', error);
+            res.status(500).json({ error: error.message });
+        });
+};
+
+
 // Middleware to authenticate JWT tokens 
 const authenticateJWT = (req, res, next) => {
     const token = req.cookies.token;
+    //console.log('authenticateJWT - Token:', token); // Log the token
     if (!token) {
         return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
     try {
         const decoded = jwt.verify(token, 'jwt_secret'); //if the token is available, then verify it.
+        //console.log('authenticateJWT - Decoded:', decoded); // Log the decoded token
         req.user = decoded;
         next();
     } catch (ex) {
+        console.error('authenticateJWT - Error:', ex);
         res.status(400).json({ message: 'Invalid token.' });
     }
 };
@@ -95,4 +136,4 @@ const authorizeRoles = (...roles) => {
     };
 };
 
-module.exports = { addUser, getUser, updateUser, deleteUser, login, authenticateJWT, authorizeRoles };
+module.exports = { addUser, getUser, updateUser, deleteUser, login, getCurrentUser, authenticateJWT, authorizeRoles };

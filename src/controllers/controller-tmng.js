@@ -1,4 +1,4 @@
-//controller-tmng.js
+//controller-1.js
 const Test = require('../models/model-tmng');
 
 const getTests = (req,res) =>{

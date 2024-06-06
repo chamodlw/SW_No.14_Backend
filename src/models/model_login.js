@@ -1,73 +1,38 @@
-// model3.js - Login model
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
+const Schema = mongoose.Schema;
 
-const userSchema = new Schema({ //creating a model for user.
-    fullname: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    address: {
-        type: String,
-        required: true
-    },
-    nationalID: {
-        type: String,
-        required: true, 
-        unique: true
-    },
-    username: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
+const userSchema = new Schema({
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    address: { type: String, required: true },
+    nationalID: { type: String, required: true, unique: true },
+    phonenumber: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ['DOCTOR', 'PATIENT', 'ADMIN'], required: true }
+});
+
+userSchema.statics.authenticate = async function(username, password) {
+    try {
+        const user = await this.findOne({ username: username }).exec();
+        if (!user) {
+            console.log('No user found');
+            return null;
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password); //To check with the password we have in the DB
+        if (!isPasswordValid) {
+            console.log('Invalid password');
+            return null;
+        }
+
+        return user;
+    } catch (err) {
+        throw err;
     }
-});
-
-// Hash the password before saving to the database
-userSchema.pre('save', function(next) {
-    const user = this;
-    if (!user.isModified('password')) return next();
-
-    bcrypt.genSalt(10, function(err, salt) {
-        if (err) return next(err);
-
-        bcrypt.hash(user.password, salt, function(err, hash) {
-            if (err) return next(err);
-            user.password = hash;
-            next();
-        });
-    });
-});
-
-// Method to authenticate user
-userSchema.statics.authenticate = function(username, password) {
-    return new Promise((resolve, reject) => {
-        this.findOne({ username: username }, (err, user) => {
-            if (err) return reject(err);
-            if (!user) return resolve(null);
-
-            bcrypt.compare(password, user.password, (err, result) => {
-                if (err) return reject(err);
-                if (result === true) {
-                    resolve(user);
-                } else {
-                    resolve(null);
-                }
-            });
-        });
-    });
 };
 
-const user = mongoose.model('User', userSchema); //Assigning userSchema to a model names User . When we get another field other than String for password and user name, this model will validate it and stop it. 
-
-module.exports = user; //export user model as a module
+module.exports = mongoose.model('User', userSchema);
+ 

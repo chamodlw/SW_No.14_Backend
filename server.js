@@ -1,5 +1,5 @@
 require('dotenv').config();
-const port = process.env.PORT || 3100;
+const port = process.env.PORT || 3101;
 const host = 'localhost';
 const mongoose = require('mongoose');
 const app = require('./src/app'); // Import app.js - app instance
@@ -9,7 +9,7 @@ const app = require('./src/app'); // Import app.js - app instance
 
 //const uri ='mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority';
 
-const uri = ('mongodb://127.0.0.1:27017/employee');
+const uri = ('mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority');
 const connect = async () =>{ 
     try{
        await mongoose.connect(uri); 
@@ -26,5 +26,4 @@ connect();
 const server = app.listen(port,host, () => { //port and host were added to variables in the top
     console.log(`Node Server listen to ${server.address().port}`); //this console log is to confirm that the server is running
 });
-
 

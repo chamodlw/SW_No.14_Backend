@@ -1,4 +1,4 @@
-//app.jsc
+//app.js
 const express = require('express'); //Importing the express framework by requiring the 'express'module.
 const app = express();  //Creates an instance of the Express application.
 const cors = require('cors');

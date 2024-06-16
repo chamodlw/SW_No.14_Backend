@@ -1,8 +1,7 @@
-//controller1.js
-const Test = require('../models/model1');
-const Appointment = require('../models/model2');
+//controller-.js
+const Test = require('../models/model-tmng');
 
-const getTests = (req,res,next) =>{
+const getTests = (req,res) =>{
     Test.find()
         .then(response =>{
             res.json({response})
@@ -13,11 +12,15 @@ const getTests = (req,res,next) =>{
 };
 
 const addTest = (req, res, next) => {
-    const { id, name, description } = req.body;
+    const { id, name, description ,max,min,unit,price} = req.body;
     const test = new Test({
         id:id,
-      name: name,
-      description: description,
+        name: name,
+        description: description,
+        min:min,
+        max:max,
+        unit:unit,
+        price:price,
     });
     test.save()
       .then(response => {
@@ -28,37 +31,9 @@ const addTest = (req, res, next) => {
       });
   }
   
-  const addAppointment = (req, res, next) => {
-    const { id, selectTestIds, selectTestNames } = req.body;
-    
-    // Create an array to hold the tests with their IDs and names
-    const selectTests = [];
-    
-    // Loop through the IDs and names arrays to create objects for each test
-    for (let i = 0; i < selectTestIds.length; i++) {
-        selectTests.push({
-            testId: selectTestIds[i],
-            testName: selectTestNames[i]
-        });
-    }
-
-    // Create a new appointment object with the selectTests array
-    const appointment = new Appointment({
-        id: id,
-        selectTests: selectTests // Include selectTests array in the appointment object
-    });
-
-    // Save the appointment to the database
-    appointment.save()
-        .then(response => {
-            res.json({ response });
-        })
-        .catch(error => {
-            res.status(500).json({ error });
-        });
-};
+  
 const updateTest =(req,res,next) =>{
-    const {id,name,description} = req.body;
+    const {id,name,description,max,min,unit,price} = req.body;
     // Prepare the update object based on user input
     let updateObject = {};
     if (name) {
@@ -66,6 +41,18 @@ const updateTest =(req,res,next) =>{
     }
     if (description) {
         updateObject.description = description;
+    }
+    if (min) {
+        updateObject.min = min;
+    }
+    if (max) {
+        updateObject.max = max;
+    }
+    if (unit) {
+        updateObject.unit = unit;
+    }
+    if (price) {
+        updateObject.price = price;
     }
 
     // Update the Test document
@@ -105,6 +92,5 @@ const selectTest =(req,res,next) =>{
 exports.getTests = getTests;
 exports.updateTest = updateTest;
 exports.addTest = addTest;
-exports.addAppointment = addAppointment;
 exports.deleteTest = deleteTest;
 exports.selectTest = selectTest;

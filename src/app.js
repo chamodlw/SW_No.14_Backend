@@ -1,92 +1,214 @@
-//app.js
-const express = require('express');
-const app = express();
+//app.jsc
+const express = require('express'); //Importing the express framework by requiring the 'express'module.
+const app = express();  //Creates an instance of the Express application.
 const cors = require('cors');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const controller1 = require('./controllers/controller1.js');
-const controller3 = require('./controllers/controller3.js');
-const User = require('./models/model3.js');
-const { signin, login, getUser, updateUser, deleteUser } = require('./controllers/controller3.js');
+const cookieParser = require('cookie-parser');
 
 
-app.use(cors()); //middleware
+const controller = require('./controllers/controller.js');
+const controllertmng = require('./controllers/controller-tmng.js');
+const controllerappmng = require('./controllers/controller-appmng.js');
+const controller3 = require('./controllers/controller_dapproval.js');
+const controller_login = require('./controllers/controller_login.js');
+
+
+//middleware
+app.use(cors({
+    origin: 'http://localhost:3000', // Frontend URL, //Where we would like to access the jwt token from? The frontend URL of Login
+    credentials: true,
+  }
+));
+app.options('*', cors());
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use(
     express.urlencoded({
         extended:true,
     })
 );
+app.use(express.json());
 
-app.use(express.json()); //middleware
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
+// Import routes
+const routerappmng = require('./routes/router-appmng');
+const routertmng = require('./routes/router-tmng');
+const router = require('./routes/router');
+const router_dapproval = require('./routes/routes_dapproval');
+const router_login = require('./routes/router_login');
+const protectedRoutes = require('./routes/protected');
+
+// Routes - How will the routers in route files will be accessed.
+app.use('/api', router);
+app.use('/api', router_dapproval);
+app.use('/api', routerappmng);
+app.use('/api', routertmng);
+app.use('/api/router_login', router_login);
+app.use('/api/protected', protectedRoutes);
+
+//Define routes - Router handles
 //chamod start
-app.get('/tests',(req,res)=>{
-    controller1.getTests(tests => {
+app.get('/tests',(req, res)=>{  
+    controllertmng.getTests(tests => {
         res.send(tests);
     });
 });
 
 
-app.post('/addtest',(req,res) =>{
+app.post('/addtest',(req, res) =>{
     console.log('connect to mongodb');
-    controller1.addTest(req.body,(callack) =>{
+    controllerappmng.addTest(req.body,(callack) =>{
         res.send(callack);
     });
 });
 
-app.post('/addappointment',(req,res) =>{
-    console.log('connect to mongodb');
-    controller1.addAppointment(req.body,(callack) =>{
+
+app.post('/updatetest',(req, res) =>{
+    controllertmng.updateTest(req.body,(callack) =>{
         res.send(callack);
     });
 });
 
-app.post('/updatetest',(req,res) =>{
-    controller1.updateTest(req.body,(callack) =>{
+app.post('/deletetest',(req, res) =>{
+    controllertmng.deleteTest(req.body,(callack) =>{
         res.send(callack);
     });
 });
 
-app.post('/deletetest',(req,res) =>{
-    controller1.deleteTest(req.body,(callack) =>{
-        res.send(callack);
-    });
-});
-
-app.post('/selecttest',(req,res) =>{
-    controller1.selectTest(tests =>{
+app.post('/selecttest',(req, res) =>{
+    controllertmng.selectTest(tests =>{
         res.send(tests);
     });
 });
-//chamod end
 
 //Theoda signin start
 
-//making rest APIs and taking the CRUD we built in controller, to app.js
-app.get('/users',(req, res)=>{ //The URL /users represents a route in this Express application. When a client makes a GET request to this URL, the corresponding route handler is triggered. 
-    controller3.getUser(req.body, res, (callack) => { //controller3 - using a controller named controller3 and invoking its getUsers method. Here, req, res, next are parameters.
-        res.send(callack); //User - what is being exported in model3
+app.get('/users',(req, res)=>{ 
+    controller_login.getUser(req.body, res, (callack) => { 
+        res.send(callack); 
     });
 });
 
 app.post('/createuser',(req, res) =>{
-    controller3.signin(req.body, (callack) =>{
+    controller_login.addUser(req.body, (callack) =>{
+    });
+});
+
+app.post('/updateuser',(req, res) =>{
+        controller_login.updateUser(req.body, (callack) =>{
+            res.send(callack);
+        });
+    });
+
+app.post('/deleteuser',(req, res) =>{
+        controller_login.deleteUser(req.body, (callack) =>{
+            res.send(callack);
+        });
+    });
+
+app.post('/login', (req, res) => {
+        try {
+            controller_login.login(req.body, (callback) => {
+                if (callback.error) {
+                    console.error('Login error:', callback.error);
+                    res.status(500).json({ message: callback.error });
+                } else {
+                    res.status(200).json(callback);
+                }
+            });
+    } catch (error) {
+            console.error('Unexpected server error:', error);
+            res.status(500).json({ message: 'Internal server error.' });
+    }
+});
+    
+
+    // Chamod code 2 start
+app.get('/appointments',(req,res)=>{
+    controllerappmng.getAppointments(appointments => {
+        res.send(appointments);
+    });
+});
+app.post('/addappointment',(req,res) =>{
+    console.log('connect to mongodb');
+    controllerappmng.addAppointment(req.body,(callack) =>{
         res.send(callack);
     });
 });
 
-    app.put('/updateuser',(req, res) =>{
-        controller3.updateUser(req.body, (callack) =>{
-            res.send(callack); //returning call back to check whether the method has been updates correctly and who has been updates
-        });
-    });
+//chamod end
 
-        app.delete('/deleteuser',(req, res) =>{
-            controller3.deleteUser(req.body, (callack) =>{
-                res.send(callack);
+app.post('/recommendations',(req,res) =>{
+    console.log('connect to mongodb');
+    controller3.recommendation(req.body,(callack) =>{
+        res.send(callack);
+    });
+});
+
+//rajith start
+app.get('/testing-users', (req, res) =>  {
+    controller.getUsers((req, res, next) => {
+        res.send();
+    });
+});
+
+app.delete('/deleteuser',(req, res) =>{
+    controller_login.deleteUser(req.body, (callack) =>{
+        res.send(callack);
             });
         });
+app.post('/create-testing-user', (req, res) =>  {
+    controller.addUser(req.body, (callback) => {
+        res.send();
+    });
+});
 
-// Theoda login end
+app.post('/update-testing-user', (req, res) =>  {
+    controller.updateUser(req.body, (callback) => {
+        res.send(callback);
+    });
+});
+
+app.delete('/delete-testing-user', (req, res) =>  {
+    controller.deleteUser(req.body, (callback) => {
+        res.send(callback);
+    });
+});
+
+app.get('/test_tubes', (req, res) =>  {
+    controller.getTestTubes((req, res, next) => {
+        res.send();
+    });
+});
+
+app.post('/createtest_tubes', (req, res) =>  {
+    controller.addTestTube(req.body, (callback) => {
+        res.send();
+    });
+});
+
+app.post('/updatetest_tubes', (req, res) =>  {
+    controller.updateTestTube(req.body, (callback) => {
+        res.send(callback);
+    });
+});
+
+app.delete('/deletetest_tubes', (req, res) =>  {
+    controller.deleteTestTube(req.body, (callback) => {
+        res.send(callback);
+    });
+});
+
+
+
+
+
 module.exports = app;

@@ -6,6 +6,7 @@ const recommendationSchema =new Schema({
     date:String,
     id:Number,
     recommendation:String,
+    docname:String,
 })
 const Recommendation =mongoose.model('Recommendation', recommendationSchema);
 

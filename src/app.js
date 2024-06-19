@@ -162,6 +162,12 @@ app.post('/testresult',(req,res) =>{
     });
 });
 
+
+app.get('/getUserEmailByReportId', (req, res) =>  {
+    controller_email.getUserEmailByReportId((req, res, next) => {
+        res.send();
+    });
+});
 //rajith start
 app.get('/testing-users', (req, res) =>  {
     controller.getUsers((req, res, next) => {

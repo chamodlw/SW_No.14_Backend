@@ -1,12 +1,13 @@
 const Testresult = require('../models/model_operator');
 
 const testresult = (req, res) => {
-    const { date, id, testtype, testresult } = req.body;
+    const { date, id, testtype, testresult,uid } = req.body;
     const newTestresult = new Testresult({
-        date: date || "2024.1.2", // Use provided date or default
-        id: id || "1", // Use provided id or default
-        testtype: testtype || "sugar", // Use provided testtype or default
-        testresult: testresult || "21", // Use provided testresult or default
+        date: date || "2024.1.2", 
+        reportid: id || "1", 
+        testtype: testtype || "sugar", 
+        testresult: testresult || "21", 
+        userid:uid||"200250203922"
     });
     newTestresult.save()
         .then(response => {

@@ -1,32 +1,29 @@
-// const { request } = require('http');
 // const { response } = require('./app');
-// const User = require('./model');
-
-// const getUsers =(req,res,next)=>{
-//     User.find()
-//     .then(response=>{
-//         res.json({response})
-//     })
-//     .catch(error=>{
-//         res.json({message:error})
-//     })
-// };
+const testresult = require('../models/model(RB_LA)');
 
 
 
+const getresultbyid = (req, res, next) => {
+    
+    testresult.find()
+        .then(response => {
+            res.json({ response })
+        })
+        .catch(error => {
+            error: error
+        });
+};
 
-// const UpdateUser = (req,res,next)=>{
-//     const { id,name} = req.body;
-//     User.updateOne({id:id},{$set:{name:name}},)
-//     .then(response=>{
-//         res.json({response})
-//     })
-//     .catch(error=>{
-//         res.json({error})
-//     });
 
 
-//     }
 
-//     exports.getUsers= getUsers;
-//     exports.UpdateUser=UpdateUser;
+exports.getUsers = getUsers;
+exports.addUser = addUser;
+exports.updateUser = updateUser;
+exports.deleteUser = deleteUser;
+
+
+exports.getTestTubes = getTestTubes;
+exports.addTestTube = addTestTube;
+exports.updateTestTube = updateTestTube;
+exports.deleteTestTube = deleteTestTube;

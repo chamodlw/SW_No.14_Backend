@@ -1,5 +1,5 @@
-// require('dotenv').config();
-const port = process.env.PORT || 3101;
+require('dotenv').config();
+const port = process.env.PORT || 3100;
 const host = 'localhost';
 const mongoose = require('mongoose');
 const app = require('./src/app'); // Import app.js - app instance

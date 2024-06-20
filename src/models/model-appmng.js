@@ -8,9 +8,11 @@ const appointmentSchema = new Schema({
         testId: Number,
         testName: String
     }],
-    pid:Number,
+    pid:String,
     state:String,
     pname:String,
+    regdate:Date,
+    billvalue:Number
 })
 
 

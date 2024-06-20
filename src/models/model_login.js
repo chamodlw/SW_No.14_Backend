@@ -1,3 +1,4 @@
+//model_login.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
@@ -11,7 +12,8 @@ const userSchema = new Schema({
     phonenumber: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['DOCTOR', 'PATIENT', 'ADMIN'], required: true }
+    role: { type: String, enum: ['DOCTOR', 'PATIENT', 'ADMIN', 'LABASSISTANT', 'LABOPERATOR'], required: true },
+    profilePic: { type: String }   
 });
 
 userSchema.statics.authenticate = async function(username, password) {

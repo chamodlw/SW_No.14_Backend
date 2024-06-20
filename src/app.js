@@ -1,9 +1,12 @@
 //app.js
+const jwt = require('jsonwebtoken');
 const express = require('express'); //Importing the express framework by requiring the 'express'module.
 const app = express();  //Creates an instance of the Express application.
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+
+const User = require('../src/models/model_login.js');
 
 
 const controller = require('./controllers/controller.js');
@@ -19,6 +22,8 @@ app.use(cors({
     credentials: true,
   }
 ));
+app.use(bodyParser.json());
+
 app.options('*', cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -92,21 +97,46 @@ app.post('/selecttest',(req, res) =>{
 //Theoda signin start
 
 app.get('/users',(req, res)=>{ 
+    console.log('GET /users', req.body);
     controller_login.getUser(req.body, res, (callack) => { 
         res.send(callack); 
     });
 });
 
 app.post('/createuser',(req, res) =>{
+    console.log('POST /createuser', req.body);
     controller_login.addUser(req.body, (callack) =>{
+        console.log('Create user callback:', callack);
+        res.send(callack);
     });
 });
 
-app.post('/updateuser',(req, res) =>{
-        controller_login.updateUser(req.body, (callack) =>{
-            res.send(callack);
-        });
-    });
+// app.post('/updateuser',(req, res) =>{
+//         controller_login.updateUser(req.body, (callack) =>{
+//             res.send(callack);
+//         });
+//     });
+
+app.post('/updateuser', async (req, res) => {
+    const { _id, ...updateData } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ success: false, message: 'User ID is required' });
+    }
+    
+    try {
+        const result = await User.updateOne({ _id: id }, { $set: updateData });
+        
+        if(result){
+            res.json({ success: true, message: 'Profile updated successfully', result });
+        }
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
+    } 
+});
+
+  
 
 app.post('/deleteuser',(req, res) =>{
         controller_login.deleteUser(req.body, (callack) =>{
@@ -206,9 +236,6 @@ app.delete('/deletetest_tubes', (req, res) =>  {
         res.send(callback);
     });
 });
-
-
-
 
 
 module.exports = app;

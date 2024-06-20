@@ -7,7 +7,10 @@ const appointmentSchema = new Schema({
     selectTests: [{
         testId: Number,
         testName: String
-    }]
+    }],
+    pid:String,
+    state:String,
+    pname:String,
 })
 
 

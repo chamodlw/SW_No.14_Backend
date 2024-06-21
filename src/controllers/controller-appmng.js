@@ -11,7 +11,7 @@ const getAppointments = (req, res) => {
 };
 
 const addAppointment = async (req, res, next) => {
-    const { selectTestIds, selectTestNames, patientId, state, patientName } = req.body;
+    const { selectTestIds, selectTestNames, patientId, state, patientName,regdate, billValue } = req.body;
 
     // Check if selectTestIds and selectTestNames arrays are of the same length
     if (selectTestIds.length !== selectTestNames.length) {
@@ -57,6 +57,8 @@ const addAppointment = async (req, res, next) => {
             pid:patientId,
             state:state,
             pname:patientName,
+            regdate:regdate,
+            billvalue:billValue,
         });
 
         // Save the appointment to the database

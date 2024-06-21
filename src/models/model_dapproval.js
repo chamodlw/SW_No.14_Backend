@@ -7,6 +7,7 @@ const recommendationSchema =new Schema({
     id:Number,
     recommendation:String,
     docname:String,
+    patientId:String,
    
 })
 const Recommendation =mongoose.model('Recommendation', recommendationSchema);

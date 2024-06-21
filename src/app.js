@@ -12,6 +12,7 @@ const controllerappmng = require('./controllers/controller-appmng.js');
 const controller_dapproval = require('./controllers/controller_dapproval.js');
 const controller_login = require('./controllers/controller_login.js');
 const controllertsr=require('./controllers/controller_operator.js');
+const controller_email=require('./controllers/controller_email.js');
 
 //middleware
 app.use(cors({
@@ -46,6 +47,7 @@ const router_dapproval = require('./routes/routes_dapproval');
 const router_login = require('./routes/router_login');
 const protectedRoutes = require('./routes/protected');
 const router_operator = require('./routes/router_operator.js');
+const router_email = require('./routes/router_email.js');
 
 // Routes - How will the routers in route files will be accessed.
 app.use('/api', router);
@@ -55,6 +57,7 @@ app.use('/api', routertmng);
 app.use('/api/router_login', router_login);
 app.use('/api/protected', protectedRoutes);
 app.use('/api', router_operator);
+app.use('/api', router_email);
 
 //Define routes - Router handles
 //chamod start
@@ -161,7 +164,17 @@ app.post('/testresult',(req,res) =>{
         res.send(callack);
     });
 });
-
+app.get('/api/patientId/:reportId',(req, res)=>{ 
+    controller_dapproval. getPatientIdByReportId(req.body, res, (callack) => { 
+        res.send(callack); 
+    });
+});
+app.post('/approve',(req,res) =>{
+    console.log('connect to mongodb');
+    controller_email.approveReport(req.body,(callack) =>{
+        res.send(callack);
+    });
+});
 
 //rajith start
 app.get('/testing-users', (req, res) =>  {

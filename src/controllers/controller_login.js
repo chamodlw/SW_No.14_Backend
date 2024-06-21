@@ -72,7 +72,7 @@ const login = async (req, res, next) => {
 
             res.cookie('token', token, { httpOnly: true });
             //console.log('Sending user data:', { username: user.username, role: user.role }); // Log the user data being sent in the response
-            res.json({ message: "Success", user: { id: user._id, username: user.username, role: user.role } }); // Include the user's role in the response, so it will directed to corresposnding role page. Include id, so it will directed to their specific account
+            res.json({ message: "Success", data:token } ); // Include the user's role in the response, so it will directed to corresposnding role page. Include id, so it will directed to their specific account
         } else {
             console.log('Authentication failed for:', username);
             res.status(401).json({ message: "Invalid username or password." });

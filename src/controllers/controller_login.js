@@ -60,6 +60,7 @@ const deleteUser = (req, res, next) => {
 
 const login = async (req, res, next) => {
     try {
+        console.log("enter");
         const { username, password } = req.body;
         //console.log('Received username:', username);
         //console.log('Received password:', password); - error handling

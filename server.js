@@ -4,26 +4,31 @@ const host = 'localhost';
 const mongoose = require('mongoose');
 const app = require('./src/app'); // Import app.js - app instance
 
-// Use the app instance imported from app.js
-// app.use('/api', appInstance);
+// Import your routers
+const routerAppMng = require('./src/routes/router-appmng');
+const routerTMng = require('./src/routes/router-tmng');
+const router = require('./src/routes/router'); // Adjust the paths as needed
 
-//const uri ='mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority';
-
-const uri = ('mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority');
-const connect = async () =>{ 
-    try{
-       await mongoose.connect(uri); 
-       console.log('Connected to mongodb');
+const uri = 'mongodb+srv://wlakshan888:ByteBuzzers14@cluster0.efzfkee.mongodb.net/?retryWrites=true&w=majority';
+const connect = async () => {
+    try {
+        await mongoose.connect(uri);
+        console.log('Connected to MongoDB');
+    } catch (error) {
+        console.log('MongoDB Error:', error);
     }
-    catch(error){
-        console.log('MongoDB Error: ', error);
-    }
-}; 
+};
 
 connect();
 
-//Start server
-const server = app.listen(port,host, () => { //port and host were added to variables in the top
-    console.log(`Node Server listen to ${server.address().port}`); //this console log is to confirm that the server is running
+// Use the imported routers
+app.use('/api/appmng', routerAppMng);
+app.use('/api/tmng', routerTMng);
+app.use('/api', router);
+
+// Start server
+const server = app.listen(port, host, () => {
+    console.log(`Node Server listening on ${server.address().port}`);
 });
 
+module.exports = app;

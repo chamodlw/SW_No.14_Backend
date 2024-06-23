@@ -3,8 +3,9 @@ const mongoose=require('mongoose');
 const Schema =mongoose.Schema;
 
 const testresultSchema =new Schema({
-    date:String,
-    id:Number,
+    appointmentid:String,
+    name:String,
+    userid:String,
     testtype:String,
     testresult:String,
 })

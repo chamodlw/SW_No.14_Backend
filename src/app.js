@@ -62,9 +62,9 @@ app.use('/api', router_email);
 //Define routes - Router handles
 //chamod start
 app.get('/tests',(req, res)=>{  
-    controllertmng.getTests(tests => {
-        res.send(tests);
-    });
+    controllertmng.getTests(req.body, res , (callback) => {
+        res.send(callback);
+    });
 });
 
 
@@ -145,6 +145,11 @@ app.get('/appointments',(req,res)=>{
 app.post('/addappointment',(req,res) =>{
     console.log('connect to mongodb');
     controllerappmng.addAppointment(req.body,(callack) =>{
+        res.send(callack);
+    });
+});
+app.post('/updateappointment',(req, res) =>{
+    controllerappmng.updateAppointment(req.body,(callack) =>{
         res.send(callack);
     });
 });

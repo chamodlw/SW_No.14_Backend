@@ -70,5 +70,28 @@ const addAppointment = async (req, res, next) => {
     }
 };
 
+const updateAppointment =(req,res,next) =>{
+    const {id,selectTests,pid,state,pname,regdate,
+        billvalue} = req.body;
+    // Prepare the update object based on user input
+    let updateObject = {};
+    if (state) {
+        updateObject.state = state;
+    }
+    if (billvalue) {
+        updateObject.billvalue = billvalue;
+    }
+
+    // Update the Test document
+    Appointment.updateOne({ id: id }, { $set: updateObject })
+        .then(response=> {
+            res.json({response})
+        })
+        .catch(error=> {
+            res.json({error})
+        });
+}
+
+exports.updateAppointment = updateAppointment;
 exports.addAppointment = addAppointment;
 exports.getAppointments = getAppointments;

@@ -48,6 +48,7 @@ const router_login = require('./routes/router_login');
 const protectedRoutes = require('./routes/protected');
 const router_operator = require('./routes/router_operator.js');
 const router_email = require('./routes/router_email.js');
+const recordRoutes = require('./routes/RB.js');
 
 // Routes - How will the routers in route files will be accessed.
 app.use('/api', router);
@@ -59,13 +60,22 @@ app.use('/api/protected', protectedRoutes);
 app.use('/api', router_operator);
 app.use('/api', router_email);
 
+
 //Define routes - Router handles
 //chamod start
+
+
+//  fix code RB
 app.get('/tests',(req, res)=>{  
     controllertmng.getTests(req.body, res , (callback) => {
         res.send(callback);
     });
 });
+// app.get('/tests',(req, res)=>{  
+//     controllertmng.getTests(tests => {
+//         res.send(tests);
+//     });
+// });
 
 
 app.post('/addtest',(req, res) =>{
@@ -236,7 +246,9 @@ app.delete('/deletetest_tubes', (req, res) =>  {
 });
 
 
+// router for get test report
 
+app.use('/labreport', recordRoutes);
 
 
 module.exports = app;

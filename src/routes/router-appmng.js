@@ -5,5 +5,6 @@ const controllerappmng = require('../controllers/controller-appmng.js');
 
 router.get('/appointments',controllerappmng.getAppointments);
 router.post('/addappointment', controllerappmng.addAppointment);
+router.get('/appoinments/:appointmentID',controllerappmng.getAppointmentsByID);
 
 module.exports = router;

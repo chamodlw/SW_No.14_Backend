@@ -5,6 +5,8 @@ const app = express();  //Creates an instance of the Express application.
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const upload = multer();
 
 const User = require('../src/models/model_login.js');
 
@@ -111,30 +113,35 @@ app.post('/createuser',(req, res) =>{
     });
 });
 
-// app.post('/updateuser',(req, res) =>{
-//         controller_login.updateUser(req.body, (callack) =>{
-//             res.send(callack);
-//         });
-//     });
+app.post('/updateuser',(req, res) =>{
+        controller_login.updateUser(req.body, (callack) =>{
+            res.send(callack);
+        });
+    });
 
-app.post('/updateuser', async (req, res) => {
-    const { _id, ...updateData } = req.body;
+// app.post('/updateuser', upload.none(), async (req, res) => {
+//     const { id, _id, ...updateData } = req.body;
 
-    if (!id) {
-        return res.status(400).json({ success: false, message: 'User ID is required' });
-    }
-    
-    try {
-        const result = await User.updateOne({ _id: id }, { $set: updateData });
-        
-        if(result){
-            res.json({ success: true, message: 'Profile updated successfully', result });
-        }
-    } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
-    } 
-});
+//   // Determine the userId based on either id or _id
+//   const userId = id || _id;
+
+//   if (!userId) {
+//     return res.status(400).json({ success: false, message: 'User ID is required' });
+//   }
+
+//   try {
+//     const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+
+//     if (!updatedUser) {
+//       return res.status(404).json({ success: false, message: 'User not found or no changes made' });
+//     }
+
+//     res.json({ success: true, message: 'Profile updated successfully', user: updatedUser });
+//   } catch (error) {
+//     console.error('Error updating profile:', error);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// });
 
   
 

@@ -4,6 +4,9 @@ const User = require('../models/model_login');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const multer = require('multer'); //a middleware
+const upload = multer(); // Use multer's memory storage engine or configure as needed. Configure multer
+
 
 const addUser = (req, res, next) => {
     const { firstname, lastname, email, address, phonenumber, nationalID, role, username, password } = req.body;
@@ -75,85 +78,60 @@ const getUser = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));
 };
 
-// const updateUser = (req, res, next) => 
-//     {
-//     //console.log('Request body:', req.body); //To see what data/updations is being sent to the server.
 
-//     const { id, _id, firstname, lastname, email, address, phonenumber, nationalID, role, username, password } = req.body; //Destructuring the specific fields from the request body
-//     console.log('Request body:', req.body);
-
-//     //if (!id){
-//     const userId = id || _id; //Set the userId variable to either id or _id, whichever is present.
-//     if (!userId) {  // if userId is not present.
-//         console.log('User ID is missing', req.body);
-//         return res.status(400).json({ success: false, message: "User ID is required" });
-//     }
-//     // Construct the update object based on the provided fields
-//     const updateObject = { firstname, lastname, email, address, phonenumber, nationalID, role, username };
-//      // Hash the password if it's provided
-//     if (password) {
-//         updateObject.password = bcrypt.hashSync(password, 10);
-//     }
-
-//     //console.log('Update object:', updateObject);
-//  // Update the user record in the database
-//     User.updateOne({ _id: userId  }, { $set: updateObject })
-//         .then(response => {
-//             //console.log('Update response:', response);
-//             res.json({ success: true, message: "Profile updated successfully", response });
-//         })
-//         .catch(error => {
-//             console.error('Error updating profile:', error);
-//             res.status(500).json({ success: false, error: error.message });
-//         });};
-
+// Update user function
 const updateUser = (req, res, next) => {
     // Log the incoming request body
     console.log('Request body:', req.body);
-
+    
     // Destructure the specific fields from the request body
-    const { id, _id, firstname, lastname, email, address,nationalID,  phonenumber, username } = req.body;
-
+    const { id, _id, firstname, lastname, email, address, nationalID, phonenumber, username } = req.body;
+  
     // Set the userId variable to either id or _id, whichever is present.
     const userId = id || _id;
-
+  
     // Check if userId is present
     if (!userId) {
-        console.log('User ID is missing', req.body);
-        return res.status(400).json({ success: false, message: "User ID is required" });
+      console.log('User ID is missing', req.body);
+      return res.status(400).json({ success: false, message: "User ID is required" });
     }
-
+  
     // Construct the update object based on the provided fields
     const updateObject = { firstname, lastname, email, address, nationalID, phonenumber, username };
-
-    // // Hash the password if it's provided
-    // if (password) {
-    //     updateObject.password = bcrypt.hashSync(password, 10);
-    // }
-
+  
     // Log the update object to ensure it has the correct data
     console.log('Update object:', updateObject);
+  
+    // Create a query object to match either _id or id
+  const query = {
+    $or: [
+      { _id: userId },
+      { id: userId }
+    ]
+  };
 
-    // Update the user record in the database
-    User.updateOne({ _id: userId }, { $set: updateObject })
-        .then(response => {
-            // Log the response from the database
-            console.log('Update response:', response);
-
-            if (response.nModified === 0) {
-                // If no documents were modified, the user might not have been found
-                console.log('No documents were modified');
-                return res.status(404).json({ success: false, message: "User not found or no changes made" });
-            }
-
-            res.json({ success: true, message: "Profile updated successfully", response });
-        })
-        .catch(error => {
-            // Log any errors that occur during the update process
-            console.error('Error updating profile:', error);
-            res.status(500).json({ success: false, error: error.message });
-        });
-};
+  // Update the user record in the database
+  User.updateOne(query, { $set: updateObject })
+      .then(response => {
+        // Log the response from the database
+        console.log('Update response:', response);
+  
+        if (response.nModified === 0) {
+          // If no documents were modified, the user might not have been found
+          console.log('No documents were modified');
+          return res.status(404).json({ success: false, message: "User not found or no changes made" });
+        }
+  
+        res.json({ success: true, message: "Profile updated successfully", response });
+      })
+      .catch(error => {
+        // Log any errors that occur during the update process
+        console.error('Error updating profile:', error);
+        res.status(500).json({ success: false, error: error.message });
+      });
+  };
+  
+  
 
 
 const deleteUser = (req, res, next) => {
@@ -172,10 +150,10 @@ const login = async (req, res, next) => {
         console.log('User:', user); //Log User Details
 
         if (user) {
-            const token = jwt.sign({id: user._id, username: user.username, role: user.role }, 'jwt_secret',{ expiresIn: '1d' });
+            const token = jwt.sign({id: user._id, username: user.username, role: user.role, name: `${user.firstname} ${user.lastname}` }, 'jwt_secret',{ expiresIn: '1d' });
             //console.log('Generated token:', token); // Log the generated token
 
-            res.cookie('token', token, { httpOnly: false });
+            res.cookie('token', token, { httpOnly: true });
             //console.log('Sending user data:', { username: user.username, role: user.role }); // Log the user data being sent in the response
             res.json({ message: "Success", data:token } ); // Include the user's role in the response, so it will directed to corresposnding role page. Include id, so it will directed to their specific account
         } else {

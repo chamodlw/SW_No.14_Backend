@@ -6,7 +6,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
-const upload = multer();
 
 const User = require('../src/models/model_login.js');
 
@@ -39,6 +38,36 @@ app.use(
 );
 app.use(express.json());
 
+// Multer middleware configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // Define dynamic destination directory based on user preferences
+    const uploadPath = `uploads/${req.user.username}/`; // Example: uploads/username/
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    // Define dynamic filename based on user preferences and current timestamp
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+    const ext = path.extname(file.originalname);
+    const fileName = `${file.fieldname}-${uniqueSuffix}${ext}`;
+    cb(null, fileName);
+  },
+});
+
+// Initialize Multer with configured options
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1024 * 1024 * 5 }, // Limit file size to 5MB
+  fileFilter: function (req, file, cb) {
+    // Accept image files only
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('File is not an image!'), false);
+    }
+    cb(null, true);
+  },
+}).single('profilePic'); // Ensure this matches the field name in the FormData object
+
+  
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -113,7 +142,7 @@ app.post('/createuser',(req, res) =>{
     });
 });
 
-app.post('/updateuser',(req, res) =>{
+app.post('/updateuser', upload, (req, res) =>{
         controller_login.updateUser(req.body, (callack) =>{
             res.send(callack);
         });

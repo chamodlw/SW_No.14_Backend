@@ -6,27 +6,11 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const multer = require('multer'); //a middleware
 const upload = multer(); // Use multer's memory storage engine or configure as needed. Configure multer
-
+const path = require('path');
 
 const addUser = (req, res, next) => {
     const { firstname, lastname, email, address, phonenumber, nationalID, role, username, password } = req.body;
-    //console.log('Received request to add user:', req.body);
-
-    // try {
-    //     const { firstname, lastname, email, address, nationalID, phonenumber, username, password, role } = req.body;
-    
-    //     // Validate required fields
-    //     if (!firstname || !lastname || !email || !address || !nationalID || !phonenumber || !username || !password || !role) {
-    //       return res.status(400).send('All fields are required');
-    //     }
-
-    // // Check if username or email already exists
-    // const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-    // if (existingUser) {
-    //   return res.status(400).send('Username or email already exists');
-    // }
-
-    // Check if a user with the given nationalID or email or username already exists
+ // Check if a user with the given nationalID or email or username already exists
     User.findOne({ $or: [{ nationalID: nationalID }, { email: email }, { username: username }] })
         .then(existingUser => {
             if (existingUser) {
@@ -79,49 +63,69 @@ const getUser = (req, res, next) => {
 };
 
 
-// Update user function
 const updateUser = (req, res, next) => {
-    // Log the incoming request body
-    console.log('Request body:', req.body);
-    
-    // Destructure the specific fields from the request body
-    const { id, _id, firstname, lastname, email, address, nationalID, phonenumber, username } = req.body;
-  
-    // Set the userId variable to either id or _id, whichever is present.
-    const userId = id || _id;
-  
-    // Check if userId is present
-    if (!userId) {
-      console.log('User ID is missing', req.body);
-      return res.status(400).json({ success: false, message: "User ID is required" });
+  // Log the incoming request body
+  console.log('Request body:', req.body);
+
+  // Destructure the specific fields from the request body
+  const { id, _id, firstname, lastname, email, address, nationalID, phonenumber, username, profilePic, profilePicUrl } = req.body;
+
+  // Set the userId variable to either id or _id, whichever is present.
+  const userId = id || _id;
+
+  // Check if userId is present
+  if (!userId) {
+    console.log('User ID is missing', req.body);
+    return res.status(400).json({ success: false, message: "User ID is required" });
+  }
+
+  // Construct the update object based on the provided fields
+  const updateObject = { firstname, lastname, email, address, nationalID, phonenumber, username };
+
+  // Log the update object to ensure it has the correct data
+  console.log('Update object:', updateObject);
+
+  // Handle file upload with Multer
+  upload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      // Multer error occurred
+      console.error('Multer error:', err);
+      return res.status(500).json({ success: false, error: err.message });
+    } else if (err) {
+      // Any other error occurred
+      console.error('Error uploading file:', err);
+      return res.status(500).json({ success: false, error: err.message });
     }
-  
-    // Construct the update object based on the provided fields
-    const updateObject = { firstname, lastname, email, address, nationalID, phonenumber, username };
-  
+
+    // Add profilePic and profilePicUrl if req.file exists
+    if (req.file) {
+      updateObject.profilePic = req.file.path; // Update path based on your Multer configuration
+      updateObject.profilePicUrl = req.file.filename; // Update as needed
+    }
+
     // Log the update object to ensure it has the correct data
     console.log('Update object:', updateObject);
-  
-    // Create a query object to match either _id or id
-  const query = {
-    $or: [
-      { _id: userId },
-      { id: userId }
-    ]
-  };
 
-  // Update the user record in the database
-  User.updateOne(query, { $set: updateObject })
+    // Create a query object to match either _id or id
+    const query = {
+      $or: [
+        { _id: userId },
+        { id: userId }
+      ]
+    };
+
+    // Update the user record in the database
+    User.updateOne(query, { $set: updateObject })
       .then(response => {
         // Log the response from the database
         console.log('Update response:', response);
-  
+
         if (response.nModified === 0) {
           // If no documents were modified, the user might not have been found
           console.log('No documents were modified');
           return res.status(404).json({ success: false, message: "User not found or no changes made" });
         }
-  
+
         res.json({ success: true, message: "Profile updated successfully", response });
       })
       .catch(error => {
@@ -129,10 +133,8 @@ const updateUser = (req, res, next) => {
         console.error('Error updating profile:', error);
         res.status(500).json({ success: false, error: error.message });
       });
-  };
-  
-  
-
+  });
+};
 
 const deleteUser = (req, res, next) => {
     const { id } = req.body;
@@ -165,6 +167,44 @@ const login = async (req, res, next) => {
         res.status(500).json({ message: "Internal server error." });
     }
 };
+
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!req.user || !req.user.id) {
+    console.log('changePassword - User ID not found in request');
+    return res.status(400).json({ message: 'User ID not found in request' });
+  }
+
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log('User not found:', user);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the current password is correct
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update the user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
 
 const getCurrentUser = (req, res, next) => { //For User Profile
     //console.log('getCurrentUser - req.user:', req.user); // Log the req.user object, After successfull User Profile display, this log would be 
@@ -289,4 +329,5 @@ const transporter = nodemailer.createTransport({
   };
 
 //Here I have used authenticateJWT middleware before authorizeRoles middleware. Middleware order matters because authenticateJWT should verify the token first before authorizeRoles checks the role.
-module.exports = { addUser, getUser, updateUser, deleteUser, login, getCurrentUser, authenticateJWT, authorizeRoles, sendVerificationCode, verifyCodeAndResetPassword };
+//Exporting function
+module.exports = { addUser, getUser, updateUser, deleteUser, login, changePassword, getCurrentUser, authenticateJWT, authorizeRoles, sendVerificationCode, verifyCodeAndResetPassword };

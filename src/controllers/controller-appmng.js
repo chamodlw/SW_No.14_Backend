@@ -6,6 +6,7 @@ const getAppointments = (req, res) => {
             res.json({ response });
         })
         .catch(error => {
+            
             res.status(500).json({ error });
         });
 };
@@ -70,5 +71,50 @@ const addAppointment = async (req, res, next) => {
     }
 };
 
+
+// Rajitha edited 
+const getAppointmentsByID = async (req, res) => {
+    try {
+        const id = req.params.appointmentID;  //get Id by parameter 
+        console.log(`Fetching appointment with ID: ${id}`);
+        const appointment = await Appointment.findOne({ id: id });
+
+        if (appointment) {
+            res.json({ response: appointment });
+        } else {
+            res.status(404).json({ error: "Appointment not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
+
+
+const updateAppointment =(req,res,next) =>{
+    const {id,selectTests,pid,state,pname,regdate,
+        billvalue} = req.body;
+    // Prepare the update object based on user input
+    let updateObject = {};
+    if (state) {
+        updateObject.state = state;
+    }
+    if (billvalue) {
+        updateObject.billvalue = billvalue;
+    }
+
+    // Update the Test document
+    Appointment.updateOne({ id: id }, { $set: updateObject })
+        .then(response=> {
+            res.json({response})
+        })
+        .catch(error=> {
+            res.json({error})
+        });
+}
+
+exports.updateAppointment = updateAppointment;
 exports.addAppointment = addAppointment;
 exports.getAppointments = getAppointments;
+
+// rajitha add
+ exports.getAppointmentsByID = getAppointmentsByID;

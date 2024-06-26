@@ -68,7 +68,7 @@ const login = async (req, res, next) => {
         //console.log('User:', user); //Log User Details
 
         if (user) {
-            const token = jwt.sign({id: user._id, username: user.username, role: user.role }, 'jwt_secret',{ expiresIn: '1d' });
+            const token = jwt.sign({id: user._id, username: user.username, role: user.role , name:  `${user.firstname} ${user.lastname}`}, 'jwt_secret',{ expiresIn: '1d' });
             //console.log('Generated token:', token); // Log the generated token
 
             res.cookie('token', token, { httpOnly: true });

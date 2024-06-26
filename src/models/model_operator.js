@@ -7,7 +7,7 @@ const testresultSchema =new Schema({
     name:String,
     userid:String,
     testtype:String,
-    testresult:String,
+    testresults:String,
 })
 const Testresult =mongoose.model('Testresult', testresultSchema);
 

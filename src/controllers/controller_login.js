@@ -261,19 +261,12 @@ const authorizeRoles = (...roles) => {
     };
 };
 
-// Set up nodemailer transporter
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: 'theodahettiarachchi00@gmail.com',
-      pass: 'jmfb ptue esqm vtzr'
-    }
-  });
   
   // Function to generate a 6-digit verification code
   const generateVerificationCode = () => {
-    return crypto.randomBytes(3).toString('hex');
+    return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit number
   };
+  
   
   // Send verification code to user's email
   const sendVerificationCode = async (req, res) => {
@@ -287,9 +280,18 @@ const transporter = nodemailer.createTransport({
   
       const verificationCode = generateVerificationCode();
       user.verificationCode = verificationCode;
-      user.verificationCodeExpires = Date.now() + 3600000; // 1 hour
+      user.verificationCodeExpires = Date.now() + 3600000000; // 1 hour
       await user.save();
   
+      // Set up nodemailer transporter
+      const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+          user: 'theodahettiarachchi00@gmail.com',
+          pass: 'jmfb ptue esqm vtzr'
+  }
+});
+
       const mailOptions = {
         to: email,
         subject: 'Password Reset Verification Code',
@@ -305,22 +307,38 @@ const transporter = nodemailer.createTransport({
     }
   };
   
-  // Verify the code and reset the password
+  // Function to verify the code and reset the password
   const verifyCodeAndResetPassword = async (req, res) => {
     const { email, code, newPassword } = req.body;
   
     try {
       const user = await User.findOne({ email });
   
-      if (!user || user.verificationCode !== code || user.verificationCodeExpires < Date.now()) {
+      // Check if user exists
+      if (!user) {
+        console.log(`User not found for email: ${email}`);
+        return res.status(400).json({ success: false, message: 'User not found' });
+      }
+
+      // Verify if verification code matches and has not expired
+    console.log(`Stored verification code: ${user.verificationCode}`);
+    console.log(`Provided verification code: ${code}`);
+    console.log(`Current time: ${Date.now()}`);
+    console.log(`Verification code expires at: ${user.verificationCodeExpires}`);
+  
+       // Verify if verification code matches and has not expired
+      if (user.verificationCode !== code || user.verificationCodeExpires < Date.now()) {
         return res.status(400).json({ success: false, message: 'Invalid or expired verification code' });
       }
   
-      user.password = newPassword; // Hash the password before saving
-      user.verificationCode = undefined;
-      user.verificationCodeExpires = undefined;
-      await user.save();
+ // Hash the new password before saving
+ const hashedPassword = await bcrypt.hash(newPassword, 10);
+ user.password = hashedPassword;
+ user.verificationCode = undefined;
+ user.verificationCodeExpires = undefined;
+ await user.save();
   
+ // Send success response
       res.json({ success: true, message: 'Password reset successfully' });
     } catch (error) {
       console.error('Error resetting password:', error);

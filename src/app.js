@@ -148,31 +148,6 @@ app.post('/updateuser', upload, (req, res) =>{
         });
     });
 
-// app.post('/updateuser', upload.none(), async (req, res) => {
-//     const { id, _id, ...updateData } = req.body;
-
-//   // Determine the userId based on either id or _id
-//   const userId = id || _id;
-
-//   if (!userId) {
-//     return res.status(400).json({ success: false, message: 'User ID is required' });
-//   }
-
-//   try {
-//     const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
-
-//     if (!updatedUser) {
-//       return res.status(404).json({ success: false, message: 'User not found or no changes made' });
-//     }
-
-//     res.json({ success: true, message: 'Profile updated successfully', user: updatedUser });
-//   } catch (error) {
-//     console.error('Error updating profile:', error);
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// });
-
-  
 
 app.post('/deleteuser',(req, res) =>{
         controller_login.deleteUser(req.body, (callack) =>{

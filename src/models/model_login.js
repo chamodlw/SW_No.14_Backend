@@ -11,7 +11,7 @@ const userSchema = new Schema({
     phonenumber: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['DOCTOR', 'PATIENT', 'ADMIN'], required: true }
+    role: { type: String, enum: ['DOCTOR', 'PATIENT', 'ADMIN','LABOPERATOR', 'LABASSISTANT'], required: true }
 });
 
 userSchema.statics.authenticate = async function(username, password) {

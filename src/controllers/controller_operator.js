@@ -1,13 +1,14 @@
 const Testresult = require('../models/model_operator');
 
+
 const testresult = (req, res) => {
-    const { date, id, testtype, testresult,uid } = req.body;
+    const {id, pname, testName, testresults,pid } = req.body;
     const newTestresult = new Testresult({
-        date: date || "2024.1.2", 
-        reportid: id || "1", 
-        testtype: testtype || "sugar", 
-        testresult: testresult || "21", 
-        userid:uid||"200250203922"
+        id:id||"1",
+        pname:pname||"kavini",
+        testtype: testName || "sugar", 
+        testresults: testresults || "21", 
+        pid:pid||"200250203922"
     });
     newTestresult.save()
         .then(response => {
@@ -18,4 +19,36 @@ const testresult = (req, res) => {
         });
 };
 
-module.exports = { testresult };
+const getResults = (req, res, next) => {
+    Testresult.find()
+        .then(response => {
+            res.json({ response });
+        })
+        .catch(error => {
+            res.status(500).json({ error: error.message });
+        });
+};
+
+const updateResults = (req, res, next) => {
+    const { pid, pname, id, testName, testresults } = req.body;
+    
+    Testresult.updateOne({ pid: pid }, { pname:  pname, id: id, testtype: testName, testresults: testresults})
+    .then(response => {
+        res.json({ response });
+    })
+    .catch(error => {
+        res.status(400).json({ error: error.message });
+    });
+};
+
+const deleteResults = (req, res, next) => {
+    const id = req.body.id;
+    Testresult.deleteOne({ id: id })
+    .then(response => {
+        res.json({ response });
+    })
+    .catch(error => {
+        res.status(400).json({ error: error.message });
+    });
+};
+module.exports = { testresult,getResults,updateResults,deleteResults};

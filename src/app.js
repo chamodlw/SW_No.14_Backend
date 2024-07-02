@@ -49,6 +49,7 @@ const protectedRoutes = require('./routes/protected');
 const router_operator = require('./routes/router_operator.js');
 const router_email = require('./routes/router_email.js');
 const recordRoutes = require('./routes/RB.js');
+const router_invoiceemail = require('./routes/router_invoiceemail.js');
 
 // Routes - How will the routers in route files will be accessed.
 app.use('/api', router);
@@ -59,6 +60,7 @@ app.use('/api/router_login', router_login);
 app.use('/api/protected', protectedRoutes);
 app.use('/api', router_operator);
 app.use('/api', router_email);
+app.use('/api', router_invoiceemail);
 
 
 //Define routes - Router handles

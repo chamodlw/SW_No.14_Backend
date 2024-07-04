@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const hbs = require('nodemailer-express-handlebars');
 
 const sendEmail = async (req, res) => {
-  const {invoiceDetails,total } = req.body;
+  const {data,type } = req.body;
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -14,6 +14,7 @@ const sendEmail = async (req, res) => {
     },
   });
 
+  if (type === 'invoice') {
   const handlebarOptions = {
     viewEngine: {
       extName: '.handlebars',
@@ -24,15 +25,31 @@ const sendEmail = async (req, res) => {
     extName: '.handlebars',
   };
 
-  transporter.use('compile', hbs(handlebarOptions));
 
+
+  transporter.use('compile', hbs(handlebarOptions));
+  }
+
+
+  else{
+    const handlebarOptions = {
+      viewEngine: {
+        extName: '.handlebars',
+        partialsDir: path.resolve('./src/controllers/Reporthtml'),
+        defaultLayout: false,
+      },
+      viewPath: path.resolve('./src/controllers/Reporthtml'),
+      extName: '.handlebars',
+    };
+    transporter.use('compile', hbs(handlebarOptions));
+  }
   const mailOptions = {
     from: 'rajithaubandara@gmail.com',
     to: 'kgrubandara@gmail.com',
     subject: 'Sending Email using Node.js',
     template: 'email',
     context: {
-        invoiceDetails,total,
+        data,
     },
   };
 

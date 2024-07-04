@@ -29,14 +29,14 @@
     <h2>Health Lab</h2>
     <p>Health Lab<br>Healthlab Road Health Lab<br>1314<br>healthlab@gmail.com</p>
 
-    <p>Bill to:{{invoiceDetails.customerName}}<br>Appointment ID:{{invoiceDetails.appointmentId}}<br>{{invoiceDetails.date}}<br>Buyer phone number</p>
+    <p>Bill to:{{data.customerName}}<br>Appointment ID:{{data.appointmentId}}<br>{{data.date}}<br>Buyer phone number</p>
 
 <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
     <tr>
         <th style="background-color: #4CAF50; color: white; text-align: left; padding: 12px; border: 1px solid #ddd;">Item</th>
         <th style="background-color: #4CAF50; color: white; text-align: left; padding: 12px; border: 1px solid #ddd;">Price per unit</th>
     </tr>
-    {{#each invoiceDetails.items}}
+    {{#each data.items}}
     <tr style="border: 1px solid #ddd; padding: 12px;">
         <td style="padding: 12px; border: 1px solid #ddd;">{{this.testName}}</td>
         <td style="padding: 12px; border: 1px solid #ddd;">{{this.price}}</td>
@@ -44,7 +44,7 @@
     {{/each}}
     <tr class="total" style="font-weight: bold; background-color: #f9f9f9;">
         <td style="padding: 12px; border: 1px solid #ddd;">Total</td>
-        <td style="padding: 12px; border: 1px solid #ddd;">{{total}}</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{data.total}}</td>
     </tr>
 </table>
 

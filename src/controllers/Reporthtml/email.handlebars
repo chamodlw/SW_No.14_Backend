@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h2>Report</h2>
+    <div>
+      <p><strong>Name:</strong> {{data.patientName}}</p>
+      <p><strong>Age:</strong> {{data.PatientAge}}</p>
+      <p><strong>Sex:</strong> {{data.PatientSex}}</p>
+      <p><strong>PID:</strong> {{data.PatientID}}</p>
+      {{!-- <p><strong>Username:</strong> {{data.}}</p> --}}
+      <p><strong>Registered on:</strong> {{data.ReportedOn}}</p>
+      {{!-- <p><strong>Collected on:</strong> {{data.}}</p>
+      <p><strong>Reported on:</strong> {{data.}}</p> --}}
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Test</th>
+          <th>Result</th>
+          <th>Reference Value</th>
+          <th>Unit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each data.tableData}}
+        <tr>
+          <td>{{this.testName}}</td>
+          <td>{{this.result}}</td>
+          <td>{{this.min}} - {{this.max}}</td>
+          <td>{{this.unit}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <div>
+      <p>----------------------------- **End of report** -----------------------------</p>
+      <p>----------------------<br />{{data.LabTechnician}}</p>
+      <p>----------------------<br />Dr. {{data.Doctor}}</p>
+    </div>
+  </div>
+</body>
+</html>

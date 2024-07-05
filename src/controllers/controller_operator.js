@@ -2,13 +2,14 @@ const Testresult = require('../models/model_operator');
 
 
 const testresult = (req, res) => {
-    const {id, pname, testName, testresults,pid } = req.body;
+    const {id, pname, testName, testresults,pid,testid } = req.body;
     const newTestresult = new Testresult({
         id:id||"1",
         pname:pname||"kavini",
         testtype: testName || "sugar", 
         testresults: testresults || "21", 
-        pid:pid||"200250203922"
+        pid:pid||"200250203922",
+        testid:testid
     });
     newTestresult.save()
         .then(response => {

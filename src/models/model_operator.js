@@ -8,6 +8,7 @@ const testresultSchema =new Schema({
     id:Number,
     testtype:String,
     testresults:String,
+    testid:String,
 })
 const Testresult =mongoose.model('Testresult', testresultSchema);
 

@@ -157,6 +157,7 @@ app.get('/appointmentIds',(req,res)=>{
         res.send(appointmentIds);
     });
 });
+
 app.post('/addappointment',(req,res) =>{
     console.log('connect to mongodb');
     controllerappmng.addAppointment(req.body,(callack) =>{

@@ -3,12 +3,13 @@ const User = require('../models/model_login');
 const getUserByID = async (req, res) => {
     try {
         const id = req.params.id;  //get Id by parameter 
-        console.log(`Fetching User with firstname: ${id}`);
+        console.log(`Fetching User with id: ${id}`);
         
         const user = await User.findOne({ _id: id });
 
         if (user) {
             res.json({ user });
+            console.log(`responce send : ${user}`);
         } else {
             res.status(404).json({ error: "user not found" });
         }

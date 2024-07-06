@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true},
     address: { type: String, required: true },
     nationalID: { type: String, required: true, unique: true },
     phonenumber: { type: String, required: true },
@@ -14,7 +14,8 @@ const userSchema = new Schema({
     role: { type: String, enum: ['DOCTOR', 'PATIENT', 'ADMIN', 'LABASSISTANT', 'LABOPERATOR'], required: true },
     profilePic: { type: String },
     verificationCode: { type: String },
-    verificationCodeExpires: { type: Date }
+    verificationCodeExpires: { type: Date },
+    status: { type: String, enum: ['approved', 'denied', 'pending'], default: 'pending' }
 });
 
 // Static method to authenticate user

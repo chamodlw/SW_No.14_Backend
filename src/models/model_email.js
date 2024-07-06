@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const { EMAIL_USER, EMAIL_PASS } = require('../config');
 const { recommendations } = require('../controllers/controller_dapproval');
 
-const sendApprovalEmail = async (reportId, doctorName, recommendation, patientId) => {
+const sendApprovalEmail = async (reportId, doctorName, recommendation, patientId,patientEmail) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -15,7 +15,7 @@ const sendApprovalEmail = async (reportId, doctorName, recommendation, patientId
     
     const mailOptions = {
       from: EMAIL_USER,
-      to: EMAIL_USER,
+      to: patientEmail,
       subject: 'Report Approved',
       text: `Patient ID :${patientId}
       The report with ID: ${reportId} has been approved by Dr. ${doctorName}.

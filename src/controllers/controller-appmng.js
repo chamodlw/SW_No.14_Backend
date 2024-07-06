@@ -10,6 +10,17 @@ const getAppointments = (req, res) => {
             res.status(500).json({ error });
         });
 };
+const getAppointmentIds = async (req, res) => {
+    try {
+        const appointments = await Appointment.find({}, 'id');
+        const appointmentIds = appointments.map(appointment => appointment.id);
+        res.json({ appointmentIds });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 
 const addAppointment = async (req, res, next) => {
     const { selectTestIds, selectTestNames, patientId, state, patientName,regdate, billValue } = req.body;
@@ -76,7 +87,7 @@ const addAppointment = async (req, res, next) => {
 const getAppointmentsByID = async (req, res) => {
     try {
         const id = req.params.appointmentID;  //get Id by parameter 
-        console.log(`Fetching appointment with ID: ${id}`);
+        
         const appointment = await Appointment.findOne({ id: id });
 
         if (appointment) {
@@ -115,6 +126,6 @@ const updateAppointment =(req,res,next) =>{
 exports.updateAppointment = updateAppointment;
 exports.addAppointment = addAppointment;
 exports.getAppointments = getAppointments;
-
+exports.getAppointmentIds = getAppointmentIds;
 // rajitha add
  exports.getAppointmentsByID = getAppointmentsByID;

@@ -184,6 +184,12 @@ app.get('/appointments',(req,res)=>{
         res.send(appointments);
     });
 });
+app.get('/appointmentIds',(req,res)=>{
+    controllerappmng.getAppointmentIds(appointmentIds => {
+        res.send(appointmentIds);
+    });
+});
+
 app.post('/addappointment',(req,res) =>{
     console.log('connect to mongodb');
     controllerappmng.addAppointment(req.body,(callack) =>{
@@ -222,6 +228,22 @@ app.post('/approve',(req,res) =>{
         res.send(callack);
     });
 });
+app.get('/getResults', (req, res) =>  {
+    controllertsr.getResults((req, res, next) => {
+        res.send();
+    });
+});
+app.post('/updateResults', (req, res) =>  {
+    controllertsr.updateResults(req.body, (callback) => {
+        res.send(callback);
+    });
+});
+
+app.delete('/deleteResults',(req, res) =>{
+    controllertsr.deleteResults(req.body, (callack) =>{
+        res.send(callack);
+            });
+        });
 
 //rajith start
 app.get('/testing-users', (req, res) =>  {

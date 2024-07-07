@@ -16,6 +16,7 @@ const controller_login = require('./controllers/controller_login.js');
 const controllertsr=require('./controllers/controller_operator.js');
 const controller_email=require('./controllers/controller_email.js');
 
+
 //middleware
 app.use(cors({
     origin: 'http://localhost:3000', // Frontend URL, //Where we would like to access the jwt token from? The frontend URL of Login
@@ -81,6 +82,10 @@ const protectedRoutes = require('./routes/protected');
 const router_operator = require('./routes/router_operator.js');
 const router_email = require('./routes/router_email.js');
 const recordRoutes = require('./routes/RB.js');
+const router_invoiceemail = require('./routes/router_invoiceemail.js');
+const getUser = require('./routes/router_getUser.js');
+const router_getResultByID = require('./routes/router_getResultByID.js');
+const router_updateData = require('./routes/router_updateResult.js');
 
 // Routes - How will the routers in route files will be accessed.
 app.use('/api', router);
@@ -91,6 +96,10 @@ app.use('/api/router_login', router_login);
 app.use('/api/protected', protectedRoutes);
 app.use('/api', router_operator);
 app.use('/api', router_email);
+app.use('/api', router_invoiceemail);
+app.use('/api', getUser);
+app.use('/api', router_getResultByID);
+app.use('/api', router_updateData);
 
 
 //Define routes - Router handles
@@ -100,8 +109,7 @@ app.use('/api', router_email);
 //  fix code RB
 app.get('/tests',(req, res)=>{  
     controllertmng.getTests(req.body, res , (callback) => {
-        res.send(callback);
-    });
+        res.send(callback);});
 });
 // app.get('/tests',(req, res)=>{  
 //     controllertmng.getTests(tests => {

@@ -85,6 +85,7 @@ const recordRoutes = require('./routes/RB.js');
 const router_invoiceemail = require('./routes/router_invoiceemail.js');
 const getUser = require('./routes/router_getUser.js');
 const router_getResultByID = require('./routes/router_getResultByID.js');
+const router_updateData = require('./routes/router_updateResult.js');
 
 // Routes - How will the routers in route files will be accessed.
 app.use('/api', router);
@@ -98,6 +99,7 @@ app.use('/api', router_email);
 app.use('/api', router_invoiceemail);
 app.use('/api', getUser);
 app.use('/api', router_getResultByID);
+app.use('/api', router_updateData);
 
 
 //Define routes - Router handles

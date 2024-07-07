@@ -201,19 +201,14 @@ const login = async (req, res, next) => {
 
 const changePassword = async (req, res) => {
   console.log('changePassword - Request body:', req.body);
-  const { currentPassword, newPassword } = req.body;
-
-  if (!req.user || !req.user.id) {
-    console.log('changePassword - User ID not found in request');
-    return res.status(400).json({ message: 'User ID not found in request' });
-  }
-
-  const userId = req.user.id;
+  const { currentPassword, newPassword, username } = req.body;
 
   try {
-    const user = await User.findById(userId);
+    // Find the user by username
+    const user = await User.findOne({ username });
+
     if (!user) {
-      console.log('User not found:', user);
+      console.log('User not found for the given username:', username);
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -232,13 +227,21 @@ const changePassword = async (req, res) => {
     user.password = hashedPassword;
     await user.save();
 
-    console.log('changePassword - Password changed successfully for user:', userId);
+    console.log('changePassword - Password changed successfully for user:', username);
     res.status(200).json({ message: 'Password changed successfully' });
   } catch (error) {
+    // Handle errors
     console.error('Error changing password:', error);
-    res.status(500).json({ message: 'Server error' });
+    let errorMessage = 'Server error';
+    if (error.code === 11000) {
+      errorMessage = 'Duplicate key error, username already exists';
+    } else if (error.name === 'ValidationError') {
+      errorMessage = error.message;
+    }
+    res.status(500).json({ message: errorMessage });
   }
 };
+
 
 const getCurrentUser = (req, res, next) => { //For User Profile
     //console.log('getCurrentUser - req.user:', req.user); // Log the req.user object, After successfull User Profile display, this log would be 
@@ -347,38 +350,39 @@ const sendVerificationCode = async (req, res) => {
 
 
 const verifyCodeAndResetPassword = async (req, res) => {
-  const { email, code, newPassword } = req.body;
-  console.log('Received request to reset password for email:', email);
+  const { username, code, newPassword } = req.body;
+  console.log('Received request to reset password for username:', username);
 
   try {
-      const user = await User.findOne({ email });
-      if (!user) {
-          console.log('User not found for email:', email);
-          return res.status(404).json({ success: false, message: 'User not found' });
-      }
+    const user = await User.findOne({ username });
+    if (!user) {
+      console.log('User not found for username:', username);
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
 
-      if (user.verificationCode !== code || Date.now() > user.verificationCodeExpires) {
-          console.log('Invalid or expired verification code for email:', email);
-          return res.status(400).json({ success: false, message: 'Invalid or expired verification code' });
-      }
+    if (user.verificationCode !== code || Date.now() > user.verificationCodeExpires) {
+      console.log('Invalid or expired verification code for username:', username);
+      return res.status(400).json({ success: false, message: 'Invalid or expired verification code' });
+    }
 
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
-      user.password = hashedPassword;
-      user.verificationCode = undefined;
-      user.verificationCodeExpires = undefined;
-      await user.save();
-      console.log('Password reset successfully for email:', email);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    user.password = hashedPassword;
+    user.verificationCode = undefined;
+    user.verificationCodeExpires = undefined;
+    await user.save();
+    console.log('Password reset successfully for username:', username);
 
-      // Send password reset confirmation email
-      sendPasswordResetEmail(email);
+    // Send password reset confirmation email
+    await sendPasswordResetEmail(user.email);
 
-      res.json({ success: true, message: 'Password reset successfully' });
+    res.json({ success: true, message: 'Password reset successfully' });
   } catch (error) {
-      console.error('Error resetting password:', error);
-      res.status(500).json({ success: false, message: 'Failed to reset password' });
+    console.error('Error resetting password:', error);
+    res.status(500).json({ success: false, message: 'Failed to reset password' });
   }
 };
+
 
 const sendPasswordResetEmail = (email) => {
   console.log('Preparing to send password reset email to:', email);

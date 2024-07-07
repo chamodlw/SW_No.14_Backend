@@ -15,6 +15,7 @@ const controller_dapproval = require('./controllers/controller_dapproval.js');
 const controller_login = require('./controllers/controller_login.js');
 const controllertsr=require('./controllers/controller_operator.js');
 const controller_email=require('./controllers/controller_email.js');
+const controller_contact = require('./controllers/controller_contact.js');
 
 //middleware
 app.use(cors({
@@ -208,6 +209,12 @@ app.post('/updateappointment',(req, res) =>{
 app.post('/recommendations',(req,res) =>{
     console.log('connect to mongodb');
     controller_dapproval.recommendation(req.body,(callack) =>{
+        res.send(callack);
+    });
+});
+app.post('/contact',(req,res) =>{
+    console.log('connect to mongodb');
+    controller_contact.contact(req.body,(callack) =>{
         res.send(callack);
     });
 });

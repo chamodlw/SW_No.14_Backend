@@ -4,7 +4,9 @@ const app = express();  //Creates an instance of the Express application.
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
 
+const User = require('../src/models/model_login.js');
 
 const controller = require('./controllers/controller.js');
 const controllertmng = require('./controllers/controller-tmng.js');
@@ -33,6 +35,36 @@ app.use(
     })
 );
 app.use(express.json());
+
+// Multer middleware configuration
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      // Define dynamic destination directory based on user preferences
+      const uploadPath = `uploads/${req.user.username}/`; // Example: uploads/username/
+      cb(null, uploadPath);
+    },
+    filename: function (req, file, cb) {
+      // Define dynamic filename based on user preferences and current timestamp
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+      const ext = path.extname(file.originalname);
+      const fileName = `${file.fieldname}-${uniqueSuffix}${ext}`;
+      cb(null, fileName);
+    },
+  });
+  
+  // Initialize Multer with configured options
+  const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 }, // Limit file size to 5MB
+    fileFilter: function (req, file, cb) {
+      // Accept image files only
+      if (!file.mimetype.startsWith('image/')) {
+        return cb(new Error('File is not an image!'), false);
+      }
+      cb(null, true);
+    },
+  }).single('profilePic'); // Ensure this matches the field name in the FormData object
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -158,6 +190,12 @@ app.get('/appointments',(req,res)=>{
         res.send(appointments);
     });
 });
+app.get('/appointmentIds',(req,res)=>{
+    controllerappmng.getAppointmentIds(appointmentIds => {
+        res.send(appointmentIds);
+    });
+});
+
 app.post('/addappointment',(req,res) =>{
     console.log('connect to mongodb');
     controllerappmng.addAppointment(req.body,(callack) =>{
@@ -196,6 +234,22 @@ app.post('/approve',(req,res) =>{
         res.send(callack);
     });
 });
+app.get('/getResults', (req, res) =>  {
+    controllertsr.getResults((req, res, next) => {
+        res.send();
+    });
+});
+app.post('/updateResults', (req, res) =>  {
+    controllertsr.updateResults(req.body, (callback) => {
+        res.send(callback);
+    });
+});
+
+app.delete('/deleteResults',(req, res) =>{
+    controllertsr.deleteResults(req.body, (callack) =>{
+        res.send(callack);
+            });
+        });
 
 //rajith start
 app.get('/testing-users', (req, res) =>  {

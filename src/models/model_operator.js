@@ -3,11 +3,12 @@ const mongoose=require('mongoose');
 const Schema =mongoose.Schema;
 
 const testresultSchema =new Schema({
-    date:String,
+    pid:String,
+    pname:String,
     id:Number,
     testtype:String,
-    testresult:String,
-    testid:String
+    testresults:String,
+    testid:String,
 })
 const Testresult =mongoose.model('Testresult', testresultSchema);
 

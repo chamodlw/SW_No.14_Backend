@@ -107,7 +107,7 @@ app.use('/api', router_updateData);
 
 
 //  fix code RB
-app.get('/tests',(req, res)=>{  
+app.get('/testsabc',(req, res)=>{  
     controllertmng.getTests(req.body, res , (callback) => {
         res.send(callback);});
 });

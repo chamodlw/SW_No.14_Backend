@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const controller =require('../controllers/controller-tmng.js');
 
-router.get('/tests',controller.getTests);
+router.get('/testsabc',controller.getTests);
 router.get('/selecttest',controller.selectTest);
 router.post('/addtest',controller.addTest);
 router.post('/updatetest',controller.updateTest);

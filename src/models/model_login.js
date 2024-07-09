@@ -11,7 +11,7 @@ const userSchema = new Schema({
     phonenumber: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['DOCTOR', 'PATIENT', 'ADMIN', 'LABASSISTANT', 'LABOPERATOR'], required: true },
+    role: { type: String, enum: ['PATIENT', 'DOCTOR', 'ADMIN', 'LABOPERATOR', 'LABASSISTANT'], required: true },
     profilePic: { type: String },
     verificationCode: { type: String },
     verificationCodeExpires: { type: Date },

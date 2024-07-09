@@ -2,9 +2,8 @@
 const express = require('express'); //Importing the express framework by requiring the 'express'module.
 const app = express();  //Creates an instance of the Express application.
 const cors = require('cors');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const multer = require('multer');
 
 const User = require('../src/models/model_login.js');
 
@@ -22,54 +21,21 @@ app.use(cors({
     credentials: true,
   }
 ));
-app.options('*', cors());
+// app.options('*', cors());
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); 
+// app.use(bodyParser.json()); 
+// app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 
+// Middleware to parse JSON bodies
+app.use(express.json());
 app.use(
     express.urlencoded({
         extended:true,
     })
 );
-app.use(express.json());
 
-// Multer middleware configuration
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      // Define dynamic destination directory based on user preferences
-      const uploadPath = `uploads/${req.user.username}/`; // Example: uploads/username/
-      cb(null, uploadPath);
-    },
-    filename: function (req, file, cb) {
-      // Define dynamic filename based on user preferences and current timestamp
-      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-      const ext = path.extname(file.originalname);
-      const fileName = `${file.fieldname}-${uniqueSuffix}${ext}`;
-      cb(null, fileName);
-    },
-  });
-  
-  // Initialize Multer with configured options
-  const upload = multer({
-    storage: storage,
-    limits: { fileSize: 1024 * 1024 * 5 }, // Limit file size to 5MB
-    fileFilter: function (req, file, cb) {
-      // Accept image files only
-      if (!file.mimetype.startsWith('image/')) {
-        return cb(new Error('File is not an image!'), false);
-      }
-      cb(null, true);
-    },
-  }).single('profilePic'); // Ensure this matches the field name in the FormData object
-
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
 
 // Import routes
 const routerappmng = require('./routes/router-appmng');
@@ -304,5 +270,11 @@ app.delete('/deletetest_tubes', (req, res) =>  {
 
 app.use('/labreport', recordRoutes);
 
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
 module.exports = app;

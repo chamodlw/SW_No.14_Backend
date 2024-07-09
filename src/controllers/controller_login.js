@@ -4,10 +4,7 @@ const User = require('../models/model_login');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const multer = require('multer'); //a middleware
-const upload = multer(); // Use multer's memory storage engine or configure as needed. Configure multer
-const path = require('path');
-
+const fs = require('fs');
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -76,85 +73,60 @@ const addUser = async (req, res) => {
 };
 
 
-
 const getUser = (req, res, next) => {
     User.find()
         .then(response => res.json({ response }))
         .catch(error => res.status(500).json({ error }));
-};
+};  
 
+const updateUser = async (req, res) => {
+  try {
+    console.log('Request body:', req.body);
 
-const updateUser = (req, res, next) => {
-  // Log the incoming request body
-  console.log('Request body:', req.body);
+    const { _id, firstname, lastname, email, address, nationalID, phonenumber, username, profilePic, profilePicUrl } = req.body;
 
-  // Destructure the specific fields from the request body
-  const { id, _id, firstname, lastname, email, address, nationalID, phonenumber, username, profilePic, profilePicUrl } = req.body;
+    if (!_id) {
+      console.log('User ID is missing');
+      return res.status(400).json({ message: 'User ID is missing' });
+    }
 
-  // Set the userId variable to either id or _id, whichever is present.
-  const userId = id || _id;
+    const updateFields = {};
+    if (firstname) updateFields.firstname = firstname;
+    if (lastname) updateFields.lastname = lastname;
+    if (email) updateFields.email = email;
+    if (address) updateFields.address = address;
+    if (nationalID) updateFields.nationalID = nationalID;
+    if (phonenumber) updateFields.phonenumber = phonenumber;
+    if (username) updateFields.username = username;
 
-  // Check if userId is present
-  if (!userId) {
-    console.log('User ID is missing', req.body);
-    return res.status(400).json({ success: false, message: "User ID is required" });
+    if (profilePic) {
+      // Save the base64 image to the server (optional)
+      console.log('Profile picture received:', profilePic);
+      
+      const imageBuffer = Buffer.from(profilePic.split(',')[1], 'base64');
+      const imagePath = `uploads/${username}-profile-pic.png`;
+      fs.writeFileSync(imagePath, imageBuffer);
+      console.log('Profile picture saved to:', imagePath);
+
+      updateFields.profilePicUrl = imagePath;
+    }
+
+    console.log('Update fields:', updateFields);
+
+    const updatedUser = await User.findByIdAndUpdate(_id, updateFields, { new: true });
+
+    if (!updatedUser) {
+      console.log('User not found or could not be updated');
+      return res.status(404).json({ message: 'User not found or could not be updated' });
+    }
+
+    console.log('User updated successfully:', updatedUser);
+
+    res.json({ message: 'User updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-
-  // Construct the update object based on the provided fields
-  const updateObject = { firstname, lastname, email, address, nationalID, phonenumber, username };
-
-  // Log the update object to ensure it has the correct data
-  console.log('Update object:', updateObject);
-
-  // Handle file upload with Multer
-  upload(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      // Multer error occurred
-      console.error('Multer error:', err);
-      return res.status(500).json({ success: false, error: err.message });
-    } else if (err) {
-      // Any other error occurred
-      console.error('Error uploading file:', err);
-      return res.status(500).json({ success: false, error: err.message });
-    }
-
-    // Add profilePic and profilePicUrl if req.file exists
-    if (req.file) {
-      updateObject.profilePic = req.file.path; // Update path based on your Multer configuration
-      updateObject.profilePicUrl = req.file.filename; // Update as needed
-    }
-
-    // Log the update object to ensure it has the correct data
-    console.log('Update object:', updateObject);
-
-    // Create a query object to match either _id or id
-    const query = {
-      $or: [
-        { _id: userId },
-        { id: userId }
-      ]
-    };
-
-    // Update the user record in the database
-    User.updateOne(query, { $set: updateObject })
-      .then(response => {
-        // Log the response from the database
-        console.log('Update response:', response);
-
-        if (response.nModified === 0) {
-          // If no documents were modified, the user might not have been found
-          console.log('No documents were modified');
-          return res.status(404).json({ success: false, message: "User not found or no changes made" });
-        }
-
-        res.json({ success: true, message: "Profile updated successfully", response });
-      })
-      .catch(error => {
-        // Log any errors that occur during the update process
-        console.error('Error updating profile:', error);
-        res.status(500).json({ success: false, error: error.message });
-      });
-  });
 };
 
 const deleteUser = (req, res, next) => {

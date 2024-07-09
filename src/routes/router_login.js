@@ -1,16 +1,13 @@
 //router_login.js
 const express = require('express'); //importing express
 const router_login = express.Router(); //declearing a router instance 
-const multer = require('multer');
-const upload = multer();
-
+const controller_login = require('../controllers/controller_login');
 
 const { getUser, addUser, updateUser, deleteUser, login, getCurrentUser, authenticateJWT, changePassword, authorizeRoles, sendVerificationCode, verifyCodeAndResetPassword,  notifyAdmins, approveUser, denyUser,  } = require('../controllers/controller_login.js');
 
 //The URL s to connect the Front end. 
 router_login.get('/users', getUser);
-router_login.post('/createuser', upload.none(), addUser);
-
+router_login.post('/createuser', addUser);
 router_login.post('/updateuser', updateUser);
 router_login.delete('/deleteuser', deleteUser);
 router_login.post('/login', login);

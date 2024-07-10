@@ -1,13 +1,13 @@
 const Contact = require('../models/model_contact');
 
 const contact = (req, res) => {
-  const { name, email, contact_No, message, date } = req.body;
+  const { name, email, phone_number, feedback, date } = req.body;
   const newContact = new Contact({
     name: name,
     email: email,
-    contact_No: contact_No,
+    phone_number: phone_number,
     date: date,
-    feedback: message,
+    feedback: feedback,
   });
 
   newContact.save()

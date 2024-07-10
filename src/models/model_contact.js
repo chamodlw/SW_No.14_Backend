@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const contactSchema = new Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  contact_No: { type: String, required: true },
-  date: { type: Date, required: true },
-  feedback: { type: String, required: true },
+  name: String,
+  email: String,
+  phone_number: String,
+  date: Date,
+  feedback: String,
 });
 
 const Contact = mongoose.model('Contact', contactSchema);

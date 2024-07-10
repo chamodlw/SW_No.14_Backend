@@ -8,4 +8,6 @@ router.post('/addappointment', controllerappmng.addAppointment);
 router.get('/appoinments/:appointmentID',controllerappmng.getAppointmentsByID);
 router.post('/updateappointment', controllerappmng.updateAppointment);
 router.get('/appointmentIds', controllerappmng.getAppointmentIds);
+router.get('/appointmentId', controllerappmng.getAppointmentId);
+
 module.exports = router;

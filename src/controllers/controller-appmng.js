@@ -12,14 +12,22 @@ const getAppointments = (req, res) => {
 };
 const getAppointmentIds = async (req, res) => {
     try {
-        const appointments = await Appointment.find({}, 'id');
+        const appointments = await Appointment.find({ state: 'register_only' }, 'id');
         const appointmentIds = appointments.map(appointment => appointment.id);
         res.json({ appointmentIds });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
-
+const getAppointmentId = async (req, res) => {
+    try {
+        const appointments = await Appointment.find({ state: 'result_add' }, 'id');
+        const appointmentId = appointments.map(appointment => appointment.id);
+        res.json({ appointmentId });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 
 const addAppointment = async (req, res, next) => {
@@ -127,5 +135,7 @@ exports.updateAppointment = updateAppointment;
 exports.addAppointment = addAppointment;
 exports.getAppointments = getAppointments;
 exports.getAppointmentIds = getAppointmentIds;
+exports.getAppointmentId = getAppointmentId;
+
 // rajitha add
  exports.getAppointmentsByID = getAppointmentsByID;

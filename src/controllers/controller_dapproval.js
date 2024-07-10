@@ -3,9 +3,9 @@ const Appointment = require('../models/model-appmng');
 
 // Function to handle saving recommendations
 const recommendations = (req, res) => {
-    const { date, id, recommendation, docname, pid } = req.body;
+    const {  id, recommendation, docname, pid } = req.body;
     const newRecommendation = new Recommendation({
-        date: date,
+       
         id: id,
         recommendation: recommendation,
         docname: docname,

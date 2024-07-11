@@ -12,7 +12,8 @@ const appointmentSchema = new Schema({
     state:String,
     pname:String,
     regdate:Date,
-    billvalue:Number
+    billvalue:Number,
+    patientView:String,
 })
 
 

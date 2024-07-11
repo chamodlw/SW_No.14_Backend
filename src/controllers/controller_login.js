@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const fs = require('fs');
 
+// Email transporter setup
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -14,20 +15,34 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Helper function to calculate age
+const calculateAge = (dob) => {
+  const birthDate = new Date(dob);
+  const ageDifMs = Date.now() - birthDate.getTime();
+  const ageDate = new Date(ageDifMs);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+};
+
+
+// Add User function
 const addUser = async (req, res) => {
-  // Ensure req.body exists and contains required properties
-  if (!req.body || !req.body.firstname || !req.body.lastname || !req.body.email || !req.body.address || !req.body.phonenumber || !req.body.nationalID || !req.body.role || !req.body.username || !req.body.password) {
+
+  if (!req.body || !req.body.firstname || !req.body.lastname || !req.body.email || !req.body.address || !req.body.gender || !req.body.dob || !req.body.phonenumber || !req.body.role || !req.body.username || !req.body.password) {
     return res.status(400).json({ success: false, message: 'Missing required fields in request body' });
   }
 
-  const { firstname, lastname, email, address, phonenumber, nationalID, role, username, password } = req.body;
+  const { firstname, lastname, email, address, gender, dob, nationalID, phonenumber, role, username, password } = req.body;
+  const age = calculateAge(dob);
+
+  if (age >= 16 && !nationalID) {
+    return res.status(400).json({ success: false, message: 'National ID is required for users above 16 years old' });
+  }
 
   try {
-    // Check if a user with the given nationalID or username already exists
+    // Check for existing user with the same nationalID or username
     const existingUser = await User.findOne({ $or: [{ nationalID: nationalID }, { username: username }] });
 
     if (existingUser) {
-      // Determine which field caused the duplicate
       let duplicateField;
       if (existingUser.nationalID === nationalID) {
         duplicateField = 'National ID';
@@ -42,24 +57,26 @@ const addUser = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user instance with hashed password
+    // Create new user instance
     const newUser = new User({
       firstname,
       lastname,
       email,
       address,
-      phonenumber,
+      gender,
+      dob,
       nationalID,
+      phonenumber,
       role,
       username,
-      password: hashedPassword, // Store hashed password
+      password: hashedPassword,
       status: role === 'PATIENT' ? 'approved' : 'pending', // Automatically approve PATIENT role
     });
 
     // Save the user to the database
     await newUser.save();
 
-    // Notify admins about the new user signup for roles other than PATIENT
+    // Notify admins for roles other than PATIENT
     if (role !== 'PATIENT') {
       await notifyAdmins(newUser);
     }
@@ -82,12 +99,16 @@ const getUser = (req, res, next) => {
 const updateUser = async (req, res) => {
   try {
     console.log('Request body:', req.body);
-
-    const { _id, firstname, lastname, email, address, nationalID, phonenumber, username, profilePic, profilePicUrl } = req.body;
-
+    const { _id, firstname, lastname, email, address,  gender, dob, nationalID, phonenumber, username, profilePic, profilePicUrl } = req.body;
     if (!_id) {
       console.log('User ID is missing');
       return res.status(400).json({ message: 'User ID is missing' });
+    }
+
+    const age = calculateAge(dob);
+
+    if (age >= 16 && !nationalID) {
+      return res.status(400).json({ message: 'National ID is required for users above 16 years old' });
     }
 
     const updateFields = {};
@@ -95,6 +116,8 @@ const updateUser = async (req, res) => {
     if (lastname) updateFields.lastname = lastname;
     if (email) updateFields.email = email;
     if (address) updateFields.address = address;
+    if (gender) updateFields.gender = gender;
+    if (dob) updateFields.dob = dob;
     if (nationalID) updateFields.nationalID = nationalID;
     if (phonenumber) updateFields.phonenumber = phonenumber;
     if (username) updateFields.username = username;

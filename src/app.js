@@ -102,7 +102,7 @@ app.post('/selecttest',(req, res) =>{
     });
 });
 
-//Theoda signin start
+//Theoda signup start
 
 app.get('/users',(req, res)=>{ 
     controller_login.getUser(req.body, res, (callack) => { 

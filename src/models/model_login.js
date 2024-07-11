@@ -7,7 +7,9 @@ const userSchema = new Schema({
     lastname: { type: String, required: true },
     email: { type: String, required: true},
     address: { type: String, required: true },
-    nationalID: { type: String, required: true, unique: true },
+    gender: { type: String, enum: ['Male', 'Female'], required: true }, // Adjust enum values as needed
+    dob: { type: Date, required: true }, // Assuming date of birth is stored as Date type
+    nationalID: { type: String, unique: true, sparse: true }, // Allow unique, optional field
     phonenumber: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -40,3 +42,4 @@ userSchema.statics.authenticate = async function(username, password) {
 };
 
 module.exports = mongoose.model('User', userSchema);
+

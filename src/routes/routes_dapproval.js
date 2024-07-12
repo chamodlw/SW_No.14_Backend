@@ -6,5 +6,6 @@ const controller_contact = require('../controllers/controller_contact.js');
 router.get('/patientId/:reportId', controller_dapproval.getPatientIdByReportId);
 router.post('/recommendations', controller_dapproval.recommendations);
 router.post('/contact', controller_contact.contact);
+router.get('/getcontacts',controller_contact.getContacts);
 
 module.exports = router;

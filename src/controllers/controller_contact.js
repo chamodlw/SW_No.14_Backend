@@ -18,5 +18,15 @@ const contact = (req, res) => {
       res.status(500).json({ error });
     });
 };
+const getContacts = (req,res) =>{
+  Contact.find()
+      .then(response =>{
+          res.json({response})
+      })
+      .catch(error =>{
+          res.json({error})
+      })
+};
 
-module.exports = { contact };
+exports.getContacts = getContacts;
+exports.contact = contact;

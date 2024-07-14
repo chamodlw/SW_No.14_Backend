@@ -38,7 +38,7 @@ const addUser = async (req, res) => {
   if (age >= 16 && !nationalID) {
     return res.status(400).json({ success: false, message: 'National ID is required for users above 16 years old' });
   }
-
+//comment
   try {
     // Check for existing user with the same nationalID or username
     const existingUser = await User.findOne({ $or: [{ nationalID: nationalID }, { username: username }] });

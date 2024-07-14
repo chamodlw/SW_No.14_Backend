@@ -32,6 +32,7 @@ const addUser = async (req, res) => {
   }
 
   const { firstname, lastname, email, address, gender, dob, nationalID, phonenumber, role, username, password } = req.body;
+
   const age = calculateAge(dob);
 
   if (age >= 16 && !nationalID) {
@@ -73,6 +74,11 @@ const addUser = async (req, res) => {
       status: role === 'PATIENT' ? 'approved' : 'pending', // Automatically approve PATIENT role
     });
 
+        // Conditionally include email if age is 16 or older
+        if (age >= 16) {
+          newUser.email = email;
+        }
+        
     // Save the user to the database
     await newUser.save();
 

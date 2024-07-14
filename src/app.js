@@ -280,6 +280,10 @@ app.delete('/deletetest_tubes', (req, res) =>  {
     });
 });
 
+app.get('/getcontacts',(req, res)=>{  
+    controller_contact.getContacts(req.body, res , (callback) => {
+        res.send(callback);});
+});
 
 // router for get test report
 

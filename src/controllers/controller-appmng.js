@@ -31,7 +31,7 @@ const getAppointmentId = async (req, res) => {
 
 
 const addAppointment = async (req, res, next) => {
-    const { selectTestIds, selectTestNames, patientId, state, patientName,regdate, billValue } = req.body;
+    const { selectTestIds, selectTestNames, patientId, state, patientName,regdate, billValue , patientView} = req.body;
 
     // Check if selectTestIds and selectTestNames arrays are of the same length
     if (selectTestIds.length !== selectTestNames.length) {
@@ -79,6 +79,7 @@ const addAppointment = async (req, res, next) => {
             pname:patientName,
             regdate:regdate,
             billvalue:billValue,
+            patientView:patientView,
         });
 
         // Save the appointment to the database
@@ -111,7 +112,7 @@ const getAppointmentsByID = async (req, res) => {
 
 const updateAppointment =(req,res,next) =>{
     const {id,selectTests,pid,state,pname,regdate,
-        billvalue} = req.body;
+        billvalue,patientView} = req.body;
     // Prepare the update object based on user input
     let updateObject = {};
     if (state) {
@@ -119,6 +120,12 @@ const updateAppointment =(req,res,next) =>{
     }
     if (billvalue) {
         updateObject.billvalue = billvalue;
+    }
+    if (patientView) {
+        updateObject.patientView = patientView;
+    }
+    if (pname) {
+        updateObject.pname = pname;
     }
 
     // Update the Test document

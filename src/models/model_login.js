@@ -9,7 +9,7 @@ const userSchema = new Schema({
     address: { type: String, required: true },
     gender: { type: String, enum: ['Male', 'Female'], required: true }, // Adjust enum values as needed
     dob: { type: Date, required: true }, // Assuming date of birth is stored as Date type
-    nationalID: { type: String, unique: true, sparse: true }, // Allow unique, optional field
+    nationalID: { type: String, default: '' },
     phonenumber: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },

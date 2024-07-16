@@ -10,8 +10,8 @@ const fs = require('fs');
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-      user: 'theodahettiarachchi00@gmail.com',
-      pass: 'jmfb ptue esqm vtzr',
+      user: 'healthlab00@gmail.com',
+      pass: 'ydrk ixyq govu occn',
   },
 });
 
@@ -24,10 +24,11 @@ const calculateAge = (dob) => {
 };
 
 
-// Add User function
 const addUser = async (req, res) => {
+  console.log('Request body:', req.body);
 
   if (!req.body || !req.body.firstname || !req.body.lastname || !req.body.email || !req.body.address || !req.body.gender || !req.body.dob || !req.body.phonenumber || !req.body.role || !req.body.username || !req.body.password) {
+    console.log('Missing required fields');
     return res.status(400).json({ success: false, message: 'Missing required fields in request body' });
   }
 
@@ -35,28 +36,48 @@ const addUser = async (req, res) => {
 
   const age = calculateAge(dob);
 
+  // Check if nationalID is required for users above 16 years old
   if (age >= 16 && !nationalID) {
+    console.log('National ID is required for users above 16 years old');
     return res.status(400).json({ success: false, message: 'National ID is required for users above 16 years old' });
   }
-//comment
+
   try {
-    // Check for existing user with the same nationalID or username
-    const existingUser = await User.findOne({ $or: [{ nationalID: nationalID }, { username: username }] });
+    // Store empty string if nationalID is not provided or is null
+    const nationalIDToStore = nationalID || '';
+    console.log('National ID to store:', nationalIDToStore);
+
+    // Check for existing user with the same username or nationalID (if not empty string)
+    let existingUser = null;
+    if (nationalIDToStore !== '') {
+      existingUser = await User.findOne({
+        $or: [
+          { nationalID: nationalIDToStore },
+          { username: username }
+        ]
+      });
+    } else {
+      existingUser = await User.findOne({ username: username });
+    }
+
+    console.log('Existing user:', existingUser);
 
     if (existingUser) {
       let duplicateField;
-      if (existingUser.nationalID === nationalID) {
+      if (existingUser.nationalID && existingUser.nationalID === nationalIDToStore) {
         duplicateField = 'National ID';
-      } else {
+      } else if (existingUser.username === username) {
         duplicateField = 'Username';
       }
 
       const errorMessage = `Error registering user: This ${duplicateField.toLowerCase()} already exists.`;
+      console.log(errorMessage);
       return res.status(409).json({ success: false, field: duplicateField, message: errorMessage });
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Hashed password:', hashedPassword);
 
     // Create new user instance
     const newUser = new User({
@@ -66,7 +87,7 @@ const addUser = async (req, res) => {
       address,
       gender,
       dob,
-      nationalID,
+      nationalID: nationalIDToStore,
       phonenumber,
       role,
       username,
@@ -74,17 +95,16 @@ const addUser = async (req, res) => {
       status: role === 'PATIENT' ? 'approved' : 'pending', // Automatically approve PATIENT role
     });
 
-        // Conditionally include email if age is 16 or older
-        if (age >= 16) {
-          newUser.email = email;
-        }
-        
+    console.log('New user object:', newUser);
+
     // Save the user to the database
     await newUser.save();
+    console.log('User saved successfully');
 
     // Notify admins for roles other than PATIENT
     if (role !== 'PATIENT') {
       await notifyAdmins(newUser);
+      console.log('Admins notified');
     }
 
     res.status(201).json({ success: true, message: 'Registration successful', user: newUser });
@@ -94,7 +114,8 @@ const addUser = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-//login
+
+
 
 const getUser = (req, res, next) => {
     User.find()
@@ -328,8 +349,8 @@ const sendVerificationCode = async (req, res) => {
       const transporter = nodemailer.createTransport({
           service: 'Gmail',
           auth: {
-              user: 'theodahettiarachchi00@gmail.com',
-              pass: 'jmfb ptue esqm vtzr'
+              user: 'healthlab00@gmail.com',
+              pass: 'ydrk ixyq govu occn'
           }
       });
 
@@ -391,13 +412,13 @@ const sendPasswordResetEmail = (email) => {
   const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
-          user: 'theodahettiarachchi00@gmail.com',
-          pass: 'jmfb ptue esqm vtzr',
+          user: 'healthlab00@gmail.com',
+          pass: 'ydrk ixyq govu occn',
       },
   });
 
   const mailOptions = {
-      from: 'theodahettiarachchi00@gmail.com',
+      from: 'healthlab00@gmail.com',
       to: email,
       subject: 'Password Reset Successfully',
       text: 'Your password has been reset successfully.',
@@ -435,7 +456,7 @@ const notifyAdmins = async (newUser) => {
       for (const admin of admins) {
           console.log('Sending email to admin:', admin.email);
           const mailOptions = {
-              from: 'theodahettiarachchi00@gmail.com',
+              from: 'healthlab00@gmail.com',
               to: admin.email,
               subject: 'New User Signup Approval',
               html: emailContent,
@@ -444,16 +465,16 @@ const notifyAdmins = async (newUser) => {
           console.log('Email sent to admin:', admin.email);
       }
 
-      // Send email to theodahettiarachchi00@gmail.com
-      console.log('Sending email to theodahettiarachchi00@gmail.com');
+      // Send email to healthlab00@gmail.com
+      console.log('Sending email to healthlab00@gmail.com');
       const mailOptions = {
-          from: 'theodahettiarachchi00@gmail.com',
-          to: 'theodahettiarachchi00@gmail.com',
+          from: 'healthlab00@gmail.com',
+          to: 'healthlab00@gmail.com',
           subject: 'New User Signup Approval',
           html: emailContent,
       };
       await transporter.sendMail(mailOptions);
-      console.log('Email sent to theodahettiarachchi00@gmail.com');
+      console.log('Email sent to healthlab00@gmail.com');
   } catch (error) {
       console.error('Error in notifyAdmins function:', error);
   }
@@ -472,7 +493,7 @@ const approveUser = async (req, res) => {
 
     // Send approval email
     const mailOptions = {
-      from: 'theodahettiarachchi00@gmail.com',
+      from: 'healthlab00@gmail.com',
       to: email,
       subject: 'Your Request to Join Health Lab was Accepted',
       html: `
@@ -504,7 +525,7 @@ const denyUser = async (req, res) => {
 
     // Send denial email
     const mailOptions = {
-      from: 'theodahettiarachchi00@gmail.com',
+      from: 'healthlab00@gmail.com',
       to: email,
       subject: 'Your Request to Join Health Lab was Denied',
       html: `

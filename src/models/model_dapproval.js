@@ -3,7 +3,7 @@ const mongoose=require('mongoose');
 const Schema =mongoose.Schema;
 
 const recommendationSchema =new Schema({
-    
+    date:Date,
     id:Number,
     recommendation:String,
     docname:String,

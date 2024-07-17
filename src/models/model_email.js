@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer');
 const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
-
 const { EMAIL_USER, EMAIL_PASS } = require('../config');
 
 // Configure Nodemailer transporter
@@ -31,21 +30,21 @@ transporter.use('compile', hbs(handlebarOptions));
 const sendApprovalEmail = async (patientEmail, data, logMessage) => {
   const mailOptions = {
     from: EMAIL_USER,
-    to: patientEmail,
+    to: patientEmail, // Send email to patient's email
     subject: 'Report Approved',
-    template: 'report', // Assuming you have a 'report.handlebars' template
+    template: 'report', 
     context: {
       data,
-      logMessage, // Include log message in the email template context
+      
     },
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully');
+    console.log('Approval email sent successfully');
   } catch (error) {
-    console.error('Error sending email:', error);
-    throw new Error('Error sending email');
+    console.error('Error sending approval email:', error);
+    throw new Error('Failed to send approval email');
   }
 };
 

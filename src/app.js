@@ -82,12 +82,12 @@ const router_login = require('./routes/router_login');
 const protectedRoutes = require('./routes/protected');
 const router_operator = require('./routes/router_operator.js');
 const router_email = require('./routes/router_email.js');
-const recordRoutes = require('./routes/RB.js');
+
 const router_invoiceemail = require('./routes/router_invoiceemail.js');
 const getUser = require('./routes/router_getUser.js');
 const router_getResultByID = require('./routes/router_getResultByID.js');
 const router_updateData = require('./routes/router_updateResult.js');
-
+const router_recomaendationByID = require('./routes/router_getRecomandationByID.js');
 // Routes - How will the routers in route files will be accessed.
 app.use('/api', router);
 app.use('/api', router_dapproval);
@@ -101,6 +101,7 @@ app.use('/api', router_invoiceemail);
 app.use('/api', getUser);
 app.use('/api', router_getResultByID);
 app.use('/api', router_updateData);
+app.use('/api', router_recomaendationByID);
 
 
 //Define routes - Router handles
@@ -319,9 +320,8 @@ app.get('/getcontacts',(req, res)=>{
         res.send(callback);});
 });
 
-// router for get test report
 
-app.use('/labreport', recordRoutes);
+
 
 
 module.exports = app;

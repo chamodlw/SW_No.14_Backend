@@ -10,6 +10,7 @@ const testSchema = new Schema({
     max:Number,
     unit:String,
     price:Number,
+    adddate:Date,
 })
 
 

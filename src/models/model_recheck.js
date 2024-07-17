@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const { EMAIL_USER, EMAIL_PASS } = require('../config');
 const { recommendations } = require('../controllers/controller_dapproval');
 
-const sendRecheckEmail = async (reportId, doctorName, recommendation, patientId) => {
+const sendRecheckEmail = async (reportId, doctorName, patientId) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -15,10 +15,11 @@ const sendRecheckEmail = async (reportId, doctorName, recommendation, patientId)
     
     const mailOptions = {
       from: EMAIL_USER,
-      to: EMAIL_USER,
+      to: 'rpks.0102@gmail.com',
       subject: 'Recommend to Recheck',
-      text: `Patient ID :${patientId}
-      The report with ID: ${reportId} has been recommended to recheck by Dr. ${doctorName}.
+      text: `Dear Rajith Singh,
+    The report with ID: ${reportId} has been recommended to recheck by Dr. ${doctorName}.
+    Patient ID :${patientId}
       `
     };
 

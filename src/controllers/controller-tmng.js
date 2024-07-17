@@ -12,7 +12,7 @@ const getTests = (req,res) =>{
 };
 
 const addTest = (req, res, next) => {
-    const { id, name, description ,max,min,unit,price} = req.body;
+    const { id, name, description ,max,min,unit,price,adddate} = req.body;
     const test = new Test({
         id:id,
         name: name,
@@ -21,6 +21,7 @@ const addTest = (req, res, next) => {
         max:max,
         unit:unit,
         price:price,
+        adddate:adddate,
     });
     test.save()
       .then(response => {

@@ -2,7 +2,7 @@
 const express = require('express'); //Importing the express framework by requiring the 'express'module.
 const app = express();  //Creates an instance of the Express application.
 const cors = require('cors');
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 const User = require('../src/models/model_login.js');
@@ -27,6 +27,9 @@ app.use(cors({
 
 // app.use(bodyParser.json()); 
 // app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(cookieParser());
 
@@ -78,12 +81,6 @@ app.get('/tests',(req, res)=>{
     controllertmng.getTests(req.body, res , (callback) => {
         res.send(callback);});
 });
-// app.get('/tests',(req, res)=>{  
-//     controllertmng.getTests(tests => {
-//         res.send(tests);
-//     });
-// });
-
 
 app.post('/addtest',(req, res) =>{
     console.log('connect to mongodb');

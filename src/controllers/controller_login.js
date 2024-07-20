@@ -116,26 +116,21 @@ const addUser = async (req, res) => {
 };
 
 
-
 const getUser = (req, res, next) => {
     User.find()
         .then(response => res.json({ response }))
         .catch(error => res.status(500).json({ error }));
 };  
 
+
 const updateUser = async (req, res) => {
   try {
     console.log('Request body:', req.body);
-    const { _id, firstname, lastname, email, address,  gender, dob, nationalID, phonenumber, username, profilePic, profilePicUrl } = req.body;
+    const { _id, firstname, lastname, email, address, nationalID, phonenumber, username, profilePic } = req.body;
+
     if (!_id) {
       console.log('User ID is missing');
       return res.status(400).json({ message: 'User ID is missing' });
-    }
-
-    const age = calculateAge(dob);
-
-    if (age >= 16 && !nationalID) {
-      return res.status(400).json({ message: 'National ID is required for users above 16 years old' });
     }
 
     const updateFields = {};
@@ -143,24 +138,10 @@ const updateUser = async (req, res) => {
     if (lastname) updateFields.lastname = lastname;
     if (email) updateFields.email = email;
     if (address) updateFields.address = address;
-    if (gender) updateFields.gender = gender;
-    if (dob) updateFields.dob = dob;
     if (nationalID) updateFields.nationalID = nationalID;
     if (phonenumber) updateFields.phonenumber = phonenumber;
     if (username) updateFields.username = username;
-
-    if (profilePic) {
-      // Save the base64 image to the server (optional)
-      console.log('Profile picture received:', profilePic);
-      
-      const imageBuffer = Buffer.from(profilePic.split(',')[1], 'base64');
-      const imagePath = `uploads/${username}-profile-pic.png`;
-      fs.writeFileSync(imagePath, imageBuffer);
-      console.log('Profile picture saved to:', imagePath);
-
-      updateFields.profilePicUrl = imagePath;
-    }
-
+    if (profilePic) updateFields.profilePic = profilePic;
     console.log('Update fields:', updateFields);
 
     const updatedUser = await User.findByIdAndUpdate(_id, updateFields, { new: true });
@@ -172,12 +153,13 @@ const updateUser = async (req, res) => {
 
     console.log('User updated successfully:', updatedUser);
 
-    res.json({ message: 'User updated successfully', user: updatedUser });
+    res.json({ message: 'User updated successfully', updatedUser });
   } catch (error) {
     console.error('Error updating user:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 const deleteUser = (req, res, next) => {
     const { id } = req.body;

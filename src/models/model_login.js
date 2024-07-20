@@ -5,16 +5,19 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true},
     address: { type: String, required: true },
-    nationalID: { type: String, required: true, unique: true },
+    gender: { type: String, enum: ['Male', 'Female'], required: true }, // Adjust enum values as needed
+    dob: { type: Date, required: true }, // Assuming date of birth is stored as Date type
+    nationalID: { type: String, default: '' },
     phonenumber: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['DOCTOR', 'PATIENT', 'ADMIN', 'LABASSISTANT', 'LABOPERATOR'], required: true },
+    role: { type: String, enum: ['PATIENT', 'DOCTOR', 'ADMIN', 'LABOPERATOR', 'LABASSISTANT'], required: true },
     profilePic: { type: String },
     verificationCode: { type: String },
-    verificationCodeExpires: { type: Date }
+    verificationCodeExpires: { type: Date },
+    status: { type: String, enum: ['approved', 'denied', 'pending'], default: 'pending' }
 });
 
 // Static method to authenticate user
@@ -39,3 +42,4 @@ userSchema.statics.authenticate = async function(username, password) {
 };
 
 module.exports = mongoose.model('User', userSchema);
+

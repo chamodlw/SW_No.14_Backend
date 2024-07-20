@@ -5,7 +5,7 @@ const Appointment = require('../models/model-appmng');
 const recommendations = (req, res) => {
     const {  id, recommendation, docname, pid } = req.body;
     const newRecommendation = new Recommendation({
-       
+       date:new Date().toLocaleDateString(),
         id: id,
         recommendation: recommendation,
         docname: docname,

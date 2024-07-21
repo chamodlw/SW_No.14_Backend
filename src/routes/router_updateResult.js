@@ -3,6 +3,6 @@ const express = require('express');
 const router = express.Router();
 const UpdateTest = require('../controllers/controller_updateresult');
 
-router.post('/updatdata', UpdateTest);
+router.put('/updatdata', UpdateTest);
 module.exports = router;
   

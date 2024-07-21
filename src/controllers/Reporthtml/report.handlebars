@@ -20,11 +20,15 @@
 </head>
 <body>
   <div>
-    <p>{{logMessage}}</p> <!-- Include the log message here -->
+   
     <h2>Report</h2>
+    <p>Dear {{data.patientName}},</p>
     <div>
+      <p>Your report has been approved by Dr. {{data.doctor}} with the following recommendation:
+{{data.recommendation}}</p>
       <p><strong>Name:</strong> {{data.patientName}}</p>
-      <p><strong>Email:</strong> {{data.PatientEmail}}</p>
+       <p><strong>Patient ID:</strong> {{data.patientId}}</p>
+      <p><strong>Report ID:</strong> {{data.reportId}}</p>
       <p><strong>Approved on:</strong> {{data.ReportedOn}}</p>
     </div>
     <table>
@@ -49,8 +53,8 @@
     </table>
     <div>
       <p>----------------------------- **End of report** -----------------------------</p>
-      <p>----------------------<br />{{data.LabTechnician}}</p>
-      <p>----------------------<br />Dr. {{data.Doctor}}</p>
+      <p>----------------------<br />{{data.labTechnician}}</p>
+      <p>----------------------<br />Dr. {{data.doctor}}</p>
       
     </div>
   </div>

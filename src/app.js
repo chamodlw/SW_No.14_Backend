@@ -20,7 +20,7 @@ const controller_contact = require('./controllers/controller_contact.js');
 //middleware
 app.use(cors({
     origin: 'https://healthlabfront-git-vercelfront-bytebuzzers-projects.vercel.app', // Frontend URL, //Where we would like to access the jwt token from? The frontend URL of Login
-    methods: ['GET', 'POST', 'PUT', 'DELETE', fetch], // Which methods are allowed for CORS
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Which methods are allowed for CORS
     credentials: true,
   }
 ));

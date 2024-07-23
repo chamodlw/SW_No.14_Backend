@@ -422,8 +422,8 @@ const notifyAdmins = async (newUser) => {
       const admins = await User.find({ role: 'ADMIN' });
       console.log('Admin users found:', admins);
 
-      const approveLink = `https://helthlabback-git-vercelback-bytebuzzers-projects.vercel.app/api/router_login/approve/${newUser._id}`;
-      const denyLink = `https://helthlabback-git-vercelback-bytebuzzers-projects.vercel.app/api/router_login/deny/${newUser._id}`;
+      const approveLink = `https://helthlabback.vercel.app/api/router_login/approve/${newUser._id}`;
+      const denyLink = `https://helthlabback.vercel.app/api/router_login/deny/${newUser._id}`;
 
       const emailContent = `
         <p>A new ${newUser.role} has signed up:</p>
